@@ -3,7 +3,6 @@ package centroski;
 //IMPORTACIONES
 import static centroski.ANSI_Colors.*;
 import mediosElevacion.MedioElevacion;
-import clientes
 
 import java.util.Random;
 /**
@@ -26,7 +25,6 @@ public class CentroSki {
             System.out.println(medios[i].toString() + "\n-------------");
         }
         
-        Esquiador
         
         
         
