@@ -4,28 +4,36 @@
  */
 package clientes;
 
+import ElementosCentro.ClaseSki;
+import centroski.ANSI_Colors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.Random;
 
 /**
  *
  * @author facundo
  */
-class Esquiador implements Runnable{
+public class Esquiador implements Runnable {
+    private final String color;
+    private final ClaseSki clase;
 
-    public Esquiador(mediosElevacion.MedioElevacion a) {
-        
+    public Esquiador(ClaseSki clase, String color) {
+        this.clase = clase;
+        this.color = color;
     }
-    
+
+    public String getColor() {
+        return color;
+    }
+
+    public ClaseSki getClase() {
+        return clase;
+    }
+
     @Override
-    public void run(){
-        while (true) {
-            System.out.println("Hola");
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(Esquiador.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
+    public void run() {
+        System.out.println(color + Thread.currentThread().getName() + " ejecutando..." + ANSI_Colors.RESET);
+        clase.entrarClase();
     }
 }

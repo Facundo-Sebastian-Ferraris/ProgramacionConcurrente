@@ -8,24 +8,27 @@ package clientes;
  *
  * @author facundo
  */
-public class Reloj extends Thread {
+public class Reloj implements Runnable {
     private int hora;
     private int minuto;
+    private int intervalo;
     private boolean activo;
 
-    public Reloj(int hora, int minuto){
+    public Reloj(int hora, int minuto, int intervalo){
         this.hora = hora;
         this.minuto = minuto;
+        this.intervalo = intervalo;
+        this.activo = true;
     }
 
     @Override
     public void run(){
-        
+        System.out.println("\tIniciando HILO");
         while(activo){
             
             try {
                 
-                Thread.sleep(100);
+                Thread.sleep(this.intervalo);
                 
                 if (this.minuto + 1 >= 60) {
                     
@@ -45,7 +48,7 @@ public class Reloj extends Thread {
     }
     
      public String getHoraActual() {
-        return this.hora+":"+this.minuto;
+         return String.format("%02d:%02d", hora, minuto);
     }
 
     public void detener() {
