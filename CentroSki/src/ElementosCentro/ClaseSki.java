@@ -51,7 +51,7 @@ public class ClaseSki {
     private final CyclicBarrier alumnos;
 
     //  Semaforos
-    private Semaphore rendevouz_alumno;
+    private final Semaphore rendevouz_alumno;
     
 
     //  Constructor
