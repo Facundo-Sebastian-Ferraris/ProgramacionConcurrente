@@ -6,6 +6,7 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author facundo
@@ -38,6 +39,7 @@ public class ClaseSki {
     private final int tiempo_milis;
     private int clasesExitosas;
     private int clasesCanceladas;
+    private final AtomicInteger alumnosEnEspera = new AtomicInteger(0);
     
     
     //  Mecanismos de Sincronizacion
@@ -83,29 +85,23 @@ public class ClaseSki {
         try {
             System.out.println(Thread.currentThread().getName() + " llegó a " + nombreClase);
             
+            alumnosEnEspera.incrementAndGet();
             //  awaits()
             alumnos.await(tiempo_milis, TimeUnit.MILLISECONDS);
             System.out.println(Thread.currentThread().getName() + " participa en " + nombreClase);
         } catch (TimeoutException e) {
-            // utilizo un hilo para reparar barrera
-            if (cancelada.compareAndSet(false, true)) {
-                this.clasesCanceladas++;
-                
-                //espero a que el resto de hilos salgan
-                this.rendevouz_alumno.acquire(alumnos.getParties() - 1);
-                cancelada.set(false);
+            if (alumnosEnEspera.decrementAndGet() == 0){
+                clasesCanceladas++;
                 alumnos.reset();
-                //el hilo deja todo limpio para un nuevo reuso
-            } else {
-                System.out.println(Thread.currentThread().getName() + " se retira por cancelancion de " + nombreClase);
-                this.rendevouz_alumno.release();
             }
-            
         } catch (BrokenBarrierException | InterruptedException e) {
             System.out.println(Thread.currentThread().getName() + " se entera de la cancelación de " + nombreClase);
         }
     }
 
+    public int getAlumnosEsperando(){
+        return (int)alumnosEnEspera.get();
+    }
     
     public int getClasesExitosas() {
         return clasesExitosas;
