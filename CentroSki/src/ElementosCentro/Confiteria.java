@@ -62,10 +62,22 @@ public class Confiteria {
     
     //paso 1
     public void ingresar(int[] pedidos) throws InterruptedException{
-        this.gen_Clientes.acquire();
+        gen_Clientes.acquire();
         
         inc_Cantidad_Clientes();
-        
+    }
+    
+    
+    public void realizarPedido(int[] pedidos) throws InterruptedException{
+        // Simular pedido con un sleep
+        mutex_Cajas.acquire();
+        Thread.sleep(120);
+        mutex_Cajas.release();
+    }
+    
+    public void salir() throws InterruptedException{
+        dec_Cantidad_Clientes();
+        gen_Clientes.release();
         
     }
     
