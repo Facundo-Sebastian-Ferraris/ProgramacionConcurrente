@@ -1,34 +1,37 @@
 /*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+📍 Molinetes: Cada molinete tiene un lector de tarjetas que verifica los pases de los esquiadores y registra su uso.
+Por ejemplo: el medio de elevación Silla Triple posee 3 molinetes que permiten
+el acceso a 3 esquiadores por vez.
  */
 package ElementosCentro;
+
+// import java.util.concurrent.Semaphore;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  *
  * @author facundo
  */
 public class Molinete {
-    private final int lectoraDeTarjeta = 1;
-    private int capacidad;
-    private int usosTotal;
+    private final AtomicInteger usosTotal;
+
+    // private final Semaphore mutex_Acceso;
 
     
     public Molinete(){
-        this.capacidad = 3;
-        this.usosTotal = 0;
+        // mutex_Acceso = new Semaphore(1);
+        usosTotal = new AtomicInteger(0);
     }
     
-    public void ocuparMolinete(){
-        this.capacidad--;
-        this.usosTotal++;
+    public void accederMolinete() throws InterruptedException {
+        // mutex_Acceso.acquire();
+        usosTotal.incrementAndGet();
+        // mutex_Acceso.release();
     }
     
-    public void desocuparMolinete(){
-        this.capacidad++;
-    }
+
 
     public int getUsosTotal() {
-        return this.usosTotal;
+        return usosTotal.get();
     }
 }

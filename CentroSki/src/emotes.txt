@@ -1,0 +1,192 @@
+# 🎯 Emojis Significativos para Programación y Desarrollo de Software
+# Organizados por categorías | Útiles para mensajes, commits, documentación, wikis, etc.
+
+───────────────────────────────────────────────────────────────────────────────
+
+🔹 CATEGORÍA: Estructuras de Control y Lógica
+───────────────────────────────────────────────────────────────────────────────
+➡️  Flecha: flujo de ejecución, próximo paso
+⏭️  Siguiente (skip), salto de iteración
+⏮️  Retroceso, reinicio
+🔁  Bucle, repetición, polling, reintento
+🔂  Bucle con condición, bucle infinito (coloquial)
+🔀  Aleatorio, shuffle, balanceo
+🔀➡️ Bucle con salto (ej. continue)
+🚫  Condición falsa, prohibido, validación fallida
+✅  Condición verdadera, éxito, validación OK
+❓  Condicional, valor nulo/optional, pregunta (ternario)
+✔️  Confirmación, check, guard condition cumplida
+🔀  Switch/Case (alternancia)
+📌  Caso base, valor fijo, pin en switch
+
+🔹 CATEGORÍA: Errores, Excepciones y Depuración
+───────────────────────────────────────────────────────────────────────────────
+💥  Excepción no controlada, fallo catastrófico, crash
+⚠️  Advertencia, warning, estado inestable
+🐞  Bug, error lógico (de "debugging" → "de-bugging")
+🧩  Bug difícil de encontrar, pieza faltante
+🧨  Código frágil, "bomb" (time bomb, logic bomb)
+🔥  Urgente, hotfix, incendio (🔥🚨), código en producción fallando
+🚨  Alerta crítica, fallo de sistema, CI/CD fallido
+🩹  Hotfix, parche temporal
+🧪  Prueba fallida, test roto
+🪫  Recurso agotado (memoria, conexiones, quota)
+🪫💥 OutOfMemoryError, crash por agotamiento
+📉  Degradación de rendimiento, memory leak
+
+🔹 CATEGORÍA: Concurrencia y Sincronización
+───────────────────────────────────────────────────────────────────────────────
+ParallelGroup> ParallelGroup
+🧵  Hilo (thread), tarea ligera
+🧶  Hilo (thread) — alternativa más suave que 🧵
+⚛️  Atomicidad, operación rápida/no bloqueante
+🔒  Lock adquirido, sección crítica
+🔓  Lock liberado, recurso disponible
+⏳  Espera bloqueante, spin-wait, latency
+⏱️  Timeout, límite de tiempo
+🔄  Reintento, backoff exponencial
+👥  Concurrencia, múltiples actores
+🧱  Deadlock, bloqueo mutuo
+🚦  Semáforo (binario o contado)
+🚧  Barrera, sincronización (CyclicBarrier, CountDownLatch)
+🧱🚧 Deadlock en barrera
+🔄➡️  Ciclo de espera activa
+🎯  Condición de carrera (race condition) — usado metafóricamente
+
+🔹 CATEGORÍA: Datos y Estructuras
+───────────────────────────────────────────────────────────────────────────────
+📦  Clase, módulo, paquete, librería
+🗃️  Base de datos, datastore, repositorio
+📊  Métrica, logging, monitorización
+📈  Incremento (contador, versión, métrica)
+📉  Decremento, caída
+🔢  Entero, ID, índice
+🔤  String, texto, cadena
+📜  Archivo de configuración, log, script
+📄  Documento, contrato, especificación
+🔗  Referencia, puntero, enlace
+⛓️  Cadena (linked list), dependencia fuerte
+🧮  Cálculo, operación matemática
+🧠  Caché, memoización, estado compartido
+💾  Persistencia, escritura a disco
+📡  Comunicación, llamada remota (API, RPC)
+📨  Mensaje asíncrono, evento
+📬  Cola (queue), inbox
+📭  Cola procesada, outbox
+
+🔹 CATEGORÍA: Arquitectura y Sistemas
+───────────────────────────────────────────────────────────────────────────────
+☁️  Cloud, servicio en la nube
+🐳  Docker, contenedor
+☸️  Kubernetes, orquestación
+🌐  Microservicios, API pública
+🔌  Plugin, extensión, módulo plug-in
+🧩  Componente, servicio reutilizable
+🧱  Capa, módulo, brick (arquitectura modular)
+🏗️  Arquitectura, scaffolding, setup inicial
+⚙️  Configuración, settings, ajustes
+🎛️  Panel de control, dashboard
+📡  Servicio remoto, endpoint
+📡➡️ Llamada HTTP/gRPC
+🔄  Retry, circuit breaker cerrado
+⏸️  Circuit breaker abierto
+⏹️  Circuit breaker medio abierto
+🛡️  Seguridad, auth, cifrado
+🔐  SSL/TLS, clave privada
+🔓  Clave pública, acceso abierto
+🛡️🔐 JWT, autenticación segura
+
+🔹 CATEGORÍA: CI/CD, DevOps y Operaciones
+───────────────────────────────────────────────────────────────────────────────
+🚀  Deploy, lanzamiento, release
+📥  Build, compilación, empaquetado
+📤  Deploy a producción
+🧪  Pruebas unitarias/integración
+🤖  Automatización, CI/CD pipeline
+🔧  Configuración de infra (Terraform, Ansible)
+🖥️  Servidor, nodo, máquina
+📱  Cliente, frontend, dispositivo
+🔁  Rollback, revert
+⏪  Rollback manual
+✅➡️✅ Green build, pipeline exitoso
+❌  Build fallido
+🧪❌ Test fallido
+🧹  Limpieza, garbage collection, cleanup post-deploy
+📈  Escalado (scale up)
+📉  Escalado (scale down)
+🔁🔄 Canary deployment, blue-green
+
+🔹 CATEGORÍA: Desarrollo y Flujo de Trabajo
+───────────────────────────────────────────────────────────────────────────────
+✏️  Escribiendo código, draft
+⌨️  Codificando activamente
+🧠  Diseñando, pensando, arquitectura
+🔍  Buscando bug, debugging
+🛠️  Refactorizando, mejorando código
+🧹  Limpieza de código, technical debt
+🔄  Refactor iterativo
+📚  Documentando
+🧪  Escribiendo tests
+✅  Test pasado
+❌  Test fallido
+🎯  Feature completa, objetivo cumplido
+🏁  Fin de sprint, milestone alcanzado
+🆕  Feature nueva
+✨  Mejora de UX/UI, polish
+💄  Estilización, frontend tweak
+♿  Accesibilidad
+🌍  Internacionalización (i18n)
+📏  Responsive design
+
+🔹 CATEGORÍA: Lenguajes y Tecnologías (uso común en comunidades)
+───────────────────────────────────────────────────────────────────────────────
+☕  Java
+🐍  Python
+🦀  Rust
+💎  Ruby
+🌱  Go (Gopher + hoja)
+🔵  C# / .NET
+🟦  TypeScript
+🟩  JavaScript
+🔴  Ruby on Rails (por convención)
+🟪  Kotlin
+🖤  Swift (por el logo oscuro)
+🟢  Dart / Flutter
+🐘  PHP (elePHPant)
+🌐  HTML/CSS
+⚛️  React
+🌲  Vue.js
+🔶  Angular
+🔷  Svelte
+🗄️  SQL
+🤖  Machine Learning / IA
+🧠  Red neuronal, deep learning
+📊  Data Science, análisis
+📈  Visualización de datos
+
+🔹 CATEGORÍA: Estado Mental y Cultura Tech
+───────────────────────────────────────────────────────────────────────────────
+🤯  Overengineering, complejidad innecesaria
+😵  Legacy code, sistema incomprensible
+😴  Código aburrido, boilerplate
+😎  Solución elegante, "clean code"
+🚀  Momentum, equipo en flow
+🤝  Pair programming, colaboración
+👂  Escuchando feedback, retroalimentación
+💬  Discusión técnica, debate sano
+🙏  Gracias por el PR, agradecimiento
+👏  Celebración, merge exitoso
+🎉  Release importante, milestone
+🙈  Código feo (pero funcional) — "works on my machine"
+🙈➡️😎 Refactor exitoso
+🧱➡️🧩 De legacy a modular
+
+───────────────────────────────────────────────────────────────────────────────
+✅ Notas:
+- Estos emojis se usan en commits (ej. `feat: ✨ mejorar UX`), wikis, Slack, GitHub Issues/PRs.
+- Evita sobreusar: 1–2 por mensaje es ideal.
+- Usa combinaciones para mayor expresividad (ej. `🔥🚨` = incendio crítico).
+- Algunos requieren contexto (ej. 🧵 puede ser "thread" o "tweet thread").
+
+📅 Última actualización: Diciembre 2025
+👨‍💻 Hecho con ❤️ para devs que aman la claridad y el buen humor técnico.
