@@ -11,6 +11,11 @@ que dan acceso al medio a los esquiadores.
  */
 package ElementosCentro;
 import static centroski.ANSI_Colors.*;
+
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 /**
  *
  * @author facundo
@@ -19,12 +24,17 @@ public class MedioElevacion {
     private String nombre;
     private Molinete molinetes[];
 
+    private boolean abierto = false;
+    private final Lock entrada = new ReentrantLock();
+    private final Condition espera = entrada.newCondition();
+    private Semaphore hacerFila;
+
+
     public MedioElevacion(String nombre, int cantidadMolinetes){
         
         if (cantidadMolinetes < 1 || cantidadMolinetes > 4) {
             throw new IllegalArgumentException("La cantidad de molinetes debe ser entre 1 y 4!");
         }
-        
         this.nombre = nombre;
         this.molinetes = new Molinete[cantidadMolinetes];
         for (int i = 0; i < molinetes.length; i++) {
@@ -43,6 +53,53 @@ public class MedioElevacion {
         return nombre;
     }
     
+
+    public void habilitar(){
+        entrada.lock();
+        try{
+            abierto = true;
+            espera.signalAll();
+        } finally {
+            entrada.unlock();
+        }
+    }
+
+    public void deshabilitar(){
+        entrada.lock();
+        try{
+            abierto = false;
+        } finally {
+            entrada.unlock();
+        }
+    }
+
+    public void ingresar() throws InterruptedException{
+        //ver si esta habilitado
+        if (abierto) {
+            //hacer cola pero sin esperar eternamente (tryacquire)
+            hacerFila.acquire();
+            Molinete molineteSeleccionado = elegirMolinete();
+            hacerFila.release();
+
+            
+        }
+        //si cierran los que estan en cola se deben retirar
+        //al entrar, gestionar a quien habilitar el paso 
+    }
+
+    public synchronized Molinete elegirMolinete(){//Elige al que tiene menos ocupados
+        int indice = 0;
+        int pocos = molinetes[indice].getEsperando();
+        for (int i = 1; i < molinetes.length; i++) {
+            int numeroEsperando = molinetes[i].getEsperando();
+            if(pocos > numeroEsperando){
+                pocos = numeroEsperando;
+                indice = i;
+            }
+        }
+        return this.molinetes[indice];
+    }
+
     public int getUsosTotal() {
         int r = 0;
         for (int i = 0; i < molinetes.length; i++) {
