@@ -28,6 +28,7 @@ public class MedioElevacion {
     private final Lock entrada = new ReentrantLock();
     private final Condition espera = entrada.newCondition();
     private Semaphore hacerFila;
+    private int baseEspera;
 
 
     public MedioElevacion(String nombre, int cantidadMolinetes){
@@ -80,6 +81,9 @@ public class MedioElevacion {
             hacerFila.acquire();
             Molinete molineteSeleccionado = elegirMolinete();
             hacerFila.release();
+            
+            molineteSeleccionado.accederMolinete();
+            baseEspera++;
 
             
         }
@@ -87,7 +91,7 @@ public class MedioElevacion {
         //al entrar, gestionar a quien habilitar el paso 
     }
 
-    public synchronized Molinete elegirMolinete(){//Elige al que tiene menos ocupados
+    public Molinete elegirMolinete(){//Elige al que tiene menos ocupados
         int indice = 0;
         int pocos = molinetes[indice].getEsperando();
         for (int i = 1; i < molinetes.length; i++) {

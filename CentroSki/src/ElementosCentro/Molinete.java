@@ -6,6 +6,7 @@ el acceso a 3 esquiadores por vez.
 package ElementosCentro;
 
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -25,9 +26,12 @@ public class Molinete {
     
     public void accederMolinete() throws InterruptedException {
         esperando.incrementAndGet();
-        mutex_Acceso.acquire();
-        usosTotal.incrementAndGet();
-        esperando.decrementAndGet();
+        boolean r = mutex_Acceso.tryAcquire(5, TimeUnit.SECONDS);
+        if (r) {
+            usosTotal.incrementAndGet();
+            esperando.decrementAndGet();
+        }
+        return r;
     }
     
     public void habilitarMolinete(){
