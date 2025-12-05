@@ -12,7 +12,14 @@ que dan acceso al medio a los esquiadores.
 package ElementosCentro;
 import static centroski.ANSI_Colors.*;
 
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -21,26 +28,44 @@ import java.util.concurrent.locks.ReentrantLock;
  * @author facundo
  */
 public class MedioElevacion {
+
+    //atributos
     private String nombre;
     private Molinete molinetes[];
-
-    private boolean abierto = false;
-    private final Lock entrada = new ReentrantLock();
-    private final Condition espera = entrada.newCondition();
-    private Semaphore hacerFila;
-    private int baseEspera;
+    private int indiceMolinetes;
+    private int cantidadSubidos;
+    private AtomicBoolean[] espacios;
+    
+    //mecanismos
+    private final Semaphore MUTEX_ingreso;
+    private Lock espacioAerosilla = new ReentrantLock();
+    private Condition esperarAerosilla = espacioAerosilla.newCondition();
+    private Semaphore RENDEVOUZ_liberarEsquiadores = new Semaphore(0);
+    private CyclicBarrier barrera_espera = new CyclicBarrier(this.molinetes.length);
 
 
     public MedioElevacion(String nombre, int cantidadMolinetes){
-        
+        //Excepcion
         if (cantidadMolinetes < 1 || cantidadMolinetes > 4) {
             throw new IllegalArgumentException("La cantidad de molinetes debe ser entre 1 y 4!");
         }
+
+        //Atributos
         this.nombre = nombre;
         this.molinetes = new Molinete[cantidadMolinetes];
         for (int i = 0; i < molinetes.length; i++) {
             molinetes[i] = new Molinete();
         }
+
+        this.espacios = new AtomicBoolean[cantidadMolinetes];
+        for (int i = 0; i < espacios.length; i++) {
+            espacios[i] = new AtomicBoolean(false);
+        }
+        //Mecanismos
+        indiceMolinetes = 0;
+        cantidadSubidos = 0;
+        MUTEX_ingreso = new Semaphore(1);
+
     }
 
     @Override
@@ -55,53 +80,31 @@ public class MedioElevacion {
     }
     
 
-    public void habilitar(){
-        entrada.lock();
-        try{
-            abierto = true;
-            espera.signalAll();
-        } finally {
-            entrada.unlock();
-        }
-    }
 
-    public void deshabilitar(){
-        entrada.lock();
-        try{
-            abierto = false;
-        } finally {
-            entrada.unlock();
-        }
-    }
 
-    public void ingresar() throws InterruptedException{
+    public void esquiador_ingresar() throws InterruptedException{
         //ver si esta habilitado
-        if (abierto) {
-            //hacer cola pero sin esperar eternamente (tryacquire)
-            hacerFila.acquire();
-            Molinete molineteSeleccionado = elegirMolinete();
-            hacerFila.release();
-            
-            molineteSeleccionado.accederMolinete();
-            baseEspera++;
+        MUTEX_ingreso.acquire();
+        int i = (indiceMolinetes++)%molinetes.length;
+        MUTEX_ingreso.release();
 
-            
-        }
-        //si cierran los que estan en cola se deben retirar
-        //al entrar, gestionar a quien habilitar el paso 
-    }
 
-    public Molinete elegirMolinete(){//Elige al que tiene menos ocupados
-        int indice = 0;
-        int pocos = molinetes[indice].getEsperando();
-        for (int i = 1; i < molinetes.length; i++) {
-            int numeroEsperando = molinetes[i].getEsperando();
-            if(pocos > numeroEsperando){
-                pocos = numeroEsperando;
-                indice = i;
+        this.molinetes[i].accederMolinete();
+        while (true) {
+            
+            try{
+                barrera_espera.await(2, TimeUnit.SECONDS);
+            } catch(TimeoutException e){
+                molinetes[i].habilitarMolinete();
+                barrera_espera.reset();
+                break;
+            }catch(BrokenBarrierException e){
+                
             }
         }
-        return this.molinetes[indice];
+
+        //si cierran los que estan en cola se deben retirar
+        //al entrar, gestionar a quien habilitar el paso 
     }
 
     public int getUsosTotal() {
