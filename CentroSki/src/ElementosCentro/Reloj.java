@@ -1,39 +1,51 @@
 package ElementosCentro;
 
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class Reloj {
-    private AtomicInteger hora;
-    private AtomicInteger minuto;
+    private int
+        dia,
+        hora,
+        minuto;
 
     public Reloj(int hora, int minuto){
-        this.hora = new AtomicInteger((hora+minuto/60)%24);
-        this.minuto = new AtomicInteger(minuto%60);
+        this.dia = 0;
+        this.hora = hora;
+        this.minuto = minuto;
     }
 
-    public Reloj(){
-        this.hora = new AtomicInteger(0);
-        this.minuto = new AtomicInteger(0);
+    public synchronized int getDias(){
+        return dia;
     }
 
-    public synchronized void incrementarMinuto(){
-        hora.set((hora.get() + minuto.incrementAndGet()/60)%24);
-        minuto.set(minuto.get()%60);
+    public synchronized int getHoras(){
+        return hora;
     }
 
-    public void incrementarHora(){
-        hora.set(hora.get() % 24);
-    }
-
-    public int getHoras(){
-        return hora.get();
-    }
-
-    public int getMinutos(){
-        return minuto.get();
+    public synchronized int getMinutos(){
+        return minuto;
     }
 
     public synchronized int[] getTiempo(){
-        return new int[]{hora.get(),minuto.get()};
+        return new int[]{dia,hora,minuto};
+    }
+
+    public synchronized void incrementar_Minuto(){
+        minuto++;
+        if (minuto == 60) {
+            minuto = 0;
+            hora++;
+            if (hora == 24) {
+                hora = 0;
+                dia++;
+            }
+        }
+    }
+
+    public synchronized void incrementar_Hora(){
+        hora++;
+        if (hora == 24) {
+            hora = 0;
+            dia++;
+        }
     }
 }
