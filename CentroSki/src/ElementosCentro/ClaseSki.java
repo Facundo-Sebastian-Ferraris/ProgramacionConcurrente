@@ -1,7 +1,6 @@
 package ElementosCentro;
 
 import java.util.concurrent.BrokenBarrierException;
-import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
@@ -15,47 +14,68 @@ public class ClaseSki {
     private final Condition esperando;
 
     private int cantidadEsperando;
+    private int instructoresLibres;
     private boolean hayGrupo;
-    private CyclicBarrier barrera = new CyclicBarrier(4,()->{callBack();});
-    private final Semaphore GENERIC_transcursoClase;
+
+
+    private final Semaphore RENDEVOUZ_LlegadaProfe;
+    private final Semaphore RENDEVOUZ_FinalizadaClase;
+
 
     public ClaseSki(){
         mutex = new ReentrantLock();
+        mutex1 = new ReentrantLock();
         sonCuatro = mutex.newCondition();
         esperando = mutex.newCondition();
-        GENERIC_transcursoClase = new Semaphore(0);
+        RENDEVOUZ_LlegadaProfe = new Semaphore(0);
+        RENDEVOUZ_FinalizadaClase = new Semaphore(0);
+
         cantidadEsperando = 0;
+        instructoresLibres = 0;
         hayGrupo = false;
     }
 
     public void esquiador_irClase(String nombreHilo) throws InterruptedException, BrokenBarrierException{
-
-        boolean espera = true;
+        boolean lograEsperar = true;
         mutex.lock();
-        try{
-            if (++cantidadEsperando == 4) {
-                sonCuatro.signalAll();
-                cantidadEsperando -=4;
-            } else {
-                espera = sonCuatro.await(4, TimeUnit.SECONDS);
-                if (!espera) {
-                    cantidadEsperando--;
-                }
+        try {
+            System.out.println(nombreHilo +" esta interesado en instruirse");
+            hayGrupo = ++cantidadEsperando >=4;
+            esperando.signalAll(); // resetea la "paciencia del hilo"
+            while(!hayGrupo && lograEsperar){
+                lograEsperar = sonCuatro.await(2, TimeUnit.SECONDS);
             }
+            
+            if (!lograEsperar) {
+                System.out.println(nombreHilo + " se le agota la paciencia y se va");
+                hayGrupo = --cantidadEsperando >=4;
+            }
+            
         } finally {
             mutex.unlock();
         }
+        
+        // Cuando ya tenga el grupo formado ahora toca esperar al instructor
+        RENDEVOUZ_LlegadaProfe.acquire();
+        System.out.println(nombreHilo + " en clase!!!");
+        RENDEVOUZ_FinalizadaClase.acquire();
+         System.out.println(nombreHilo + " finalizada clase!!!");
 
-        if (espera) {
-            barrera.await();
-            GENERIC_transcursoClase.acquire();
-        }
     }
-
-    public void callBack(){
+    
+    
+    public void callBackGrupo(){
         mutex.lock();
         try{
-            hayGrupo = true;
+            esperando.signal();
+        } finally {
+            mutex.unlock();
+        }
+    }
+    
+        public void callBackClase(){
+        mutex.lock();
+        try{
             esperando.signal();
         } finally {
             mutex.unlock();
@@ -65,16 +85,22 @@ public class ClaseSki {
     public void instructor_darClase(String nombreHilo) throws InterruptedException{
         mutex.lock();
         try {
+            instructoresLibres++;
             while (!hayGrupo) {
                 esperando.await();
             }
-            hayGrupo = false;
+            cantidadEsperando -= 4;
+            hayGrupo = cantidadEsperando >=4;
+            instructoresLibres--;
         } finally {
             mutex.unlock();
         }
 
+        RENDEVOUZ_LlegadaProfe.release(4);
         Thread.sleep(5000);
-        GENERIC_transcursoClase.release(4);
+        RENDEVOUZ_FinalizadaClase.release(4);
+
+
     }
 
 
