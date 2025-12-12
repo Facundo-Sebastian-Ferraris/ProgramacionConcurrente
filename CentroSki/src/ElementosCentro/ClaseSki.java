@@ -24,7 +24,6 @@ public class ClaseSki {
 
     public ClaseSki(){
         mutex = new ReentrantLock();
-        mutex1 = new ReentrantLock();
         sonCuatro = mutex.newCondition();
         esperando = mutex.newCondition();
         RENDEVOUZ_LlegadaProfe = new Semaphore(0);
@@ -35,7 +34,7 @@ public class ClaseSki {
         hayGrupo = false;
     }
 
-    public void esquiador_irClase(String nombreHilo) throws InterruptedException, BrokenBarrierException{
+    public void esquiador_irClase(String nombreHilo) throws InterruptedException{
         boolean lograEsperar = true;
         mutex.lock();
         try {
