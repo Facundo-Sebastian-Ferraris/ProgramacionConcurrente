@@ -56,7 +56,7 @@ public class MedioElevacion {
         noSubidos = GENERIC_esperaSilla.drainPermits(), //impide que se suban mas
         subidos = this.molinetes.length - noSubidos;
 
-    GENERIC_bajarSilla.release(subidos);
+    GENERIC_bajarSilla.release
     
   }
 
