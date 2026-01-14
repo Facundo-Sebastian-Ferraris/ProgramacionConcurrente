@@ -13,7 +13,6 @@ public class MedioElevacion {
   
   private int 
     esquiadoresEnEspera,        // Contador de esquiadores esperando
-    esquiadoresASubir,          // Contador de esquiadores que van a subir en la próxima silla
     sillasDisponibles,          // Sillas disponibles
     indice;                     //  Para alternar los molinetes en los que entrara cada persona
   
