@@ -30,7 +30,6 @@ public class MedioElevacion {
     sillasDisponibles = molinetes.length;
     indice = 0;
     esquiadoresEnEspera = 0;
-    esquiadoresASubir = 0;
     viajeTerminado = false;
     sillaEnMovimiento = false;
   }
