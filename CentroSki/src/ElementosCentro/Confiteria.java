@@ -1,6 +1,7 @@
 package ElementosCentro;
 
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Confiteria {
     private final Semaphore GENERIC_Sillas = new Semaphore(100);    
@@ -12,9 +13,9 @@ public class Confiteria {
     private final Semaphore RENDEVOUZ_Caja = new Semaphore(0);    
     private final Semaphore[] Mesas = new Semaphore[3];    
     
-   
     
     private int numeroMesa = 0;
+    private AtomicInteger numeroVentas = new AtomicInteger(0);
     private boolean conPostre = false;
     
 
@@ -98,5 +99,9 @@ public class Confiteria {
             System.out.println(nombreHilo + " sirve postre en el mostrador");
              Mesas[2].release();
          }
+     }
+
+     public int get_numeroVentas(){
+        return numeroVentas.get();
      }
 }

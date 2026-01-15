@@ -3,6 +3,7 @@ package ElementosCentro;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -15,6 +16,8 @@ public class ClaseSki {
 
     private int cantidadEsperando;
     private int instructoresLibres;
+    private AtomicInteger clasesExitosas = new AtomicInteger(0);
+
     private boolean hayGrupo;
 
 
@@ -88,6 +91,7 @@ public class ClaseSki {
             while (!hayGrupo) {
                 esperando.await();
             }
+            clasesExitosas.incrementAndGet();
             cantidadEsperando -= 4;
             hayGrupo = cantidadEsperando >=4;
             instructoresLibres--;
@@ -102,5 +106,8 @@ public class ClaseSki {
 
     }
 
+    public int get_ClasesExitosas(){
+        return  clasesExitosas.get();
+    }
 
 }
