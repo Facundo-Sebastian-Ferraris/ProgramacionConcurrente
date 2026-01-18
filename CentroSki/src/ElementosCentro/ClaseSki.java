@@ -57,6 +57,9 @@ public class ClaseSki {
             mutex.unlock();
         }
         
+        if (!lograEsperar) return;  //  Despues de liberar el lock se retira
+
+
         // Cuando ya tenga el grupo formado ahora toca esperar al instructor
         RENDEVOUZ_LlegadaProfe.acquire();
         System.out.println(nombreHilo + " en clase!!!");

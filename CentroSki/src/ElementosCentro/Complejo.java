@@ -6,10 +6,17 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Complejo {
     private final Random random = new Random();
     //  ELEMENTOS CLAVE:
+
+    //      GLOBAL
+    private final AtomicInteger
+        personasEnParque = new AtomicInteger();
+
     //      Medio Elevacion:
     //              Mecanismo: Monitores + Mutex
     private final MedioElevacion[] 
         mediosDeElevacion = new MedioElevacion[4];
+
+
     private AtomicInteger
         personasEnMedio = new AtomicInteger(0);  
     
@@ -26,6 +33,7 @@ public class Complejo {
         confiteria;
     
     
+    //      Utilitario
     private final Reloj
         reloj;
     
@@ -46,32 +54,36 @@ public class Complejo {
     //      3.  subir medio elevacion
     //      4.  irse  
     public void complejo_cliente_ingreso(String nombreHilo) throws InterruptedException{
+        if(!parque_abierto())return;                    //  Si el parque esta cerrado, no se puede pasar
+
+        
+        //  Datos iniciales de acceso del cliente
+        personasEnParque.incrementAndGet();             //  +1 Cliente que accedio
         int accion = random.nextInt(1, 3);              //  Cliente decide que hacer
         boolean telepase = random.nextBoolean();        //  Cliente ingresa al parque con o sin telepase
 
 
         //  Cliente se queda en parque hasta que lo decida, o hasta que el parque cierre
-        while (parque_abierto()|| accion != 4) {
+        while (parque_abierto() || accion != 4) {
             switch (accion) {
-                case 1:
-                    confiteria_cliente_ingresar(nombreHilo);
-                    break;
-                case 2:
-                    claseSki_cliente_asistir(nombreHilo);
-                    break;
-                default:
-                    medio_cliente_irMedioElevacion(telepase, nombreHilo, accion);
-                    break;
+                case 1: confiteria_cliente_ingresar(nombreHilo); break;                         //  Ir Confiteria
+                case 2: claseSki_cliente_asistir(nombreHilo); break;                            //  Ir a Clase de Ski
+                case 3: medio_cliente_irMedioElevacion(telepase, nombreHilo, accion); break;    //  Ir a Medio de Elevacion
             }
-            accion = random.nextInt(1, 4);
+
+
+            accion = random.nextInt(1, 4);      //  Cliente toma decision
         }
+
+
         System.out.println(nombreHilo + " se retira del parque");
+        personasEnParque.decrementAndGet();     //  -1 Cliente que accedio
     }
 
 
     private boolean parque_abierto(){
         int hora = reloj.getHoras();
-        return (hora>=8 && hora<=22);
+        return (8<=hora && hora<=22);
     }
 
     //  RELACIONADO A MEDIO ELEVACION
