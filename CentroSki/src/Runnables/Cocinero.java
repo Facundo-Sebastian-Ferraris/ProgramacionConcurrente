@@ -29,6 +29,6 @@ public class Cocinero implements Runnable{
 
     //  Modularizacion del nombre   (colorea el nombre a YELLOW por ser Cocinero)
     private String getName(){
-        return ANSI_Colors.YELLOW+Thread.currentThread().getName()+ANSI_Colors.RESET;
+        return Thread.currentThread().getName();
     }
 }

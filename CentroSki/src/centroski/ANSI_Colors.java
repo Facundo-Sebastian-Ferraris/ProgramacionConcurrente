@@ -45,6 +45,8 @@ public class ANSI_Colors {
     public static final String GOLD_BG = "\u001B[48;5;220m";    // Fondo dorado
     public static final String SILVER_BG = "\u001B[48;5;246m";  // Fondo plateado
     public static final String GRAY_BG = "\u001B[48;5;245m";    // Fondo gris
+    public static final String DARKGRAY_BG = "\u001B[48;5;240m";    // Fondo gris"\u001B[48;5;223m"
+    public static final String PINKSKIN_BG = "\u001B[48;2;255;145;147m";    // Fondo Piel
 
     // Estilos adicionales
     public static final String BOLD = "\u001B[1m";

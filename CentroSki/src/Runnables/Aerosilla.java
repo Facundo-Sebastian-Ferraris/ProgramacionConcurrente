@@ -17,8 +17,12 @@ public class Aerosilla implements Runnable{
     //  Ejecucion Principal
     @Override
     public void run() {
+        String nombreHilo = Thread.currentThread().getName();
+
         try {
-            complejo.medio_embarcador_darSilla(indice);
+            while (true){
+                complejo.medio_embarcador_darSilla(indice, nombreHilo);
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

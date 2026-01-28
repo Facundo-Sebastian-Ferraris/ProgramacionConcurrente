@@ -13,7 +13,8 @@ public class MedioElevacion {
 
   private int 
     sillasDisponibles,          // Sillas disponibles
-    indice;                     //  Para alternar los molinetes en los que entrara cada persona
+    indice,                     //  Para alternar los molinetes en los que entrara cada persona
+    personasEsperando;
   
 
   private boolean
@@ -48,12 +49,11 @@ public class MedioElevacion {
       indice %= this.molinetes.length;            //  Ciclar indice [0, N], N = cantidad molinetes
     MUTEX.release();
 
-
     //  Validar pase por molinete
     if(!molinetes[i].ingresar(telepase)) return;  //  Terminar algoritmo si ya no es posible ingresar
 
 
-    System.out.println(nombreHilo + " pasa y espera abordaje");  //  Mensaje de exito
+    ImpresionGUI.print("Medio Elevacion", nombreHilo + " pasa y espera abordaje");  //  Mensaje de exito
 
 
     esquiador_esperar(nombreHilo);                //  Modularizacion  donde entra monitores 
@@ -61,44 +61,57 @@ public class MedioElevacion {
   
 
   private synchronized void esquiador_esperar(String nombreHilo)  throws InterruptedException{
+    personasEsperando++;
+
+
     //  Monitor While 🖥️:
     //  Hilos esperan si ocurre cualquiera de los casos:
     //    1.  Si no hay sillas para subirse
     //    2.  Si la aerosilla se va
     while(sillasDisponibles == 0 || sillaEnMovimiento){
-        System.out.println(nombreHilo + " esperando silla...");
+      if (sillasDisponibles == 0) ImpresionGUI.print("Medio Elevacion", "Faltan Sillas!");
+      if (sillaEnMovimiento) ImpresionGUI.print("Medio Elevacion", "la aerosilla se va");
+      
+        ImpresionGUI.print("Medio Elevacion",  nombreHilo + " esperando silla...");
         wait();
+        ImpresionGUI.print("Medio Elevacion",  nombreHilo + " chequea si hay silla...");
     }
     
 
-    System.out.println(nombreHilo + " sube silla");
+    ImpresionGUI.print("Medio Elevacion", nombreHilo + " sube silla");
     
     
     sillasDisponibles--;              //  Hilo sube a silla
     while(!viajeTerminado) wait();    //  Hilo espera que termine el viaje
     sillasDisponibles++;              //  Hilo termina de viajar y se baja
     
-    
-    System.out.println(nombreHilo + " baja silla");
+    personasEsperando--;
+    ImpresionGUI.print("Medio Elevacion", nombreHilo + " baja silla");
   }
 
 
-  public synchronized void embarcador_DarSilla() throws InterruptedException{
+  public synchronized void embarcador_DarSilla(String nombreHilo) throws InterruptedException{
     sillaEnMovimiento = false;    //  habilita silla para abordar hilos
+    ImpresionGUI.print("Medio Elevacion", "\t" + nombreHilo + " <<  setea silla en movimiento a "+ sillaEnMovimiento);
+
     viajeTerminado = false;       //  indica trayecto de hilos a terminar
+    ImpresionGUI.print("Medio Elevacion", "\t" + nombreHilo + " << despierta hilos");
+
     notifyAll();                  //  despierta todos los hilos a subirse
 
-
-    Thread.sleep(1000);           //  1s tolerancia
+    ImpresionGUI.print("Medio Elevacion", "\t" + nombreHilo + " << espera 1000");
+    wait(1000);                   //  1s tolerancia
+    ImpresionGUI.print("Medio Elevacion", "\t" + nombreHilo + " >> pasaron 1000 y ahora empieza viaje con "+ (molinetes.length-sillasDisponibles));
     sillaEnMovimiento = true;     //  silla se mueve, ningun hilo puede subirse ahora
 
 
-    Thread.sleep(1000);           //  1s de viaje
+    wait(1000);                   //  1s de viaje
+    ImpresionGUI.print("Medio Elevacion", "\t" + nombreHilo + " >> termina viaje y avisa que se vayan");
     viajeTerminado = true;        //  termina viaje
 
 
     notifyAll();                  //  habilita silla para que se bajen
-    Thread.sleep(1000);           //  1s de tolerancia
+    wait(1000);                   //  1s de tolerancia
   }
 
 
@@ -108,5 +121,17 @@ public class MedioElevacion {
         r += this.molinetes[i].getUsosTotal();
     }
     return r;
+  }
+
+  public synchronized int getSillasDisponibles(){
+    return sillasDisponibles;
+  }
+
+  public synchronized int getPersonasEsperando(){
+    return personasEsperando;
+  }
+
+  public int getNumMolinetes(){
+    return molinetes.length;
   }
 }

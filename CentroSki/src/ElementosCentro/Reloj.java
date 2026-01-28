@@ -39,6 +39,26 @@ public class Reloj {
                 dia++;
             }
         }
+        notifyAll();
+    }
+
+    public synchronized void esperarHasta(int hora, int minuto) throws InterruptedException{
+        while (this.hora<hora || this.minuto<minuto) {
+            wait();
+        }
+    }
+    
+    
+    public synchronized void ventana(int a_hora, int b_hora, int a_minuto, int b_minuto) throws InterruptedException {
+        int
+            inicio = a_hora * 60 + a_minuto,
+            fin = b_hora * 60 + b_minuto,
+            ahora = hora * 60 + minuto;
+     
+         while (ahora < inicio || ahora >= fin) {
+             wait();
+             ahora = hora * 60 + minuto;
+         }
     }
 
     public synchronized void incrementar_Hora(){

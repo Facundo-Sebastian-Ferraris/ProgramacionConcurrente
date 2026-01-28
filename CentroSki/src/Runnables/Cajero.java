@@ -1,7 +1,6 @@
 package Runnables;
 
 import ElementosCentro.Complejo;
-import centroski.ANSI_Colors;
 
 //  Entidad que interactua en todas las atracciones
 public class Cajero implements Runnable{
@@ -29,6 +28,6 @@ public class Cajero implements Runnable{
 
     //  Modularizacion del nombre   (colorea el nombre a Verde por ser Cajero)
     private String getName(){
-        return ANSI_Colors.GREEN+Thread.currentThread().getName()+ANSI_Colors.RESET;
+        return Thread.currentThread().getName();
     }
 }

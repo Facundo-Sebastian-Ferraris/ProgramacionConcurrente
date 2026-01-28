@@ -15,7 +15,7 @@ public class Molinete {
 
   public boolean ingresar(boolean telepase) {
     if (telepase) {
-        usosTotal.incrementAndGet();        
+      usosTotal.incrementAndGet();        
     }
     return telepase;
   }

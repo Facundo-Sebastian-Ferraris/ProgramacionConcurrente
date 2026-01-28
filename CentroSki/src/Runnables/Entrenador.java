@@ -18,7 +18,9 @@ public class Entrenador implements Runnable{
     @Override
     public void run() {
         try {
-            complejo.claseSki_Instructor_instruir(getName());
+            while (true) {
+                complejo.claseSki_Instructor_instruir(getName());
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -27,6 +29,6 @@ public class Entrenador implements Runnable{
 
     //  Modularizacion del nombre   (colorea el nombre a ORANGE por ser Entrenador)
     private String getName(){
-        return ANSI_Colors.ORANGE+Thread.currentThread().getName()+ANSI_Colors.RESET;
+        return Thread.currentThread().getName();
     }
 }

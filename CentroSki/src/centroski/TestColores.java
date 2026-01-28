@@ -11,9 +11,6 @@ public class TestColores {
         System.out.println(ANSI_Colors.PURPLE + "Hola Mundo Morado" + ANSI_Colors.RESET);
         System.out.println(ANSI_Colors.CYAN + "Hola Mundo Cian" + ANSI_Colors.RESET);
         System.out.println(ANSI_Colors.WHITE + "Hola Mundo Blanco" + ANSI_Colors.RESET);
-
-        System.out.println("\n=== Colores de Texto Extendidos ===");
-        System.out.println(ANSI_Colors.ORANGE + "Hola Mundo Naranja" + ANSI_Colors.RESET);
         System.out.println(ANSI_Colors.PINK + "Hola Mundo Rosa" + ANSI_Colors.RESET);
         System.out.println(ANSI_Colors.LIME + "Hola Mundo Lima" + ANSI_Colors.RESET);
         System.out.println(ANSI_Colors.TEAL + "Hola Mundo Verde Azulado" + ANSI_Colors.RESET);
@@ -33,8 +30,6 @@ public class TestColores {
         System.out.println(ANSI_Colors.PURPLE_BG + "Hola Mundo con Fondo Morado" + ANSI_Colors.RESET);
         System.out.println(ANSI_Colors.CYAN_BG + "Hola Mundo con Fondo Cian" + ANSI_Colors.RESET);
         System.out.println(ANSI_Colors.WHITE_BG + "Hola Mundo con Fondo Blanco" + ANSI_Colors.RESET);
-
-        System.out.println("\n=== Colores de Fondo Extendidos ===");
         System.out.println(ANSI_Colors.ORANGE_BG + "Hola Mundo con Fondo Naranja" + ANSI_Colors.RESET);
         System.out.println(ANSI_Colors.PINK_BG + "Hola Mundo con Fondo Rosa" + ANSI_Colors.RESET);
         System.out.println(ANSI_Colors.LIME_BG + "Hola Mundo con Fondo Lima" + ANSI_Colors.RESET);

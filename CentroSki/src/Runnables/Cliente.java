@@ -1,5 +1,7 @@
 package Runnables;
 
+import java.awt.Color;
+
 import ElementosCentro.Complejo;
 import centroski.ANSI_Colors;
 
@@ -27,6 +29,6 @@ public class Cliente implements Runnable{
 
     //  Modularizacion del nombre   (colorea el nombre a Cyan por ser Cliente)
     private String getName(){
-        return ANSI_Colors.CYAN+Thread.currentThread().getName()+ANSI_Colors.RESET;
+        return Thread.currentThread().getName();
     }
 }
