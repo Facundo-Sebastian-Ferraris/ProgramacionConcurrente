@@ -101,10 +101,10 @@ public class Complejo {
 
     //  RELACIONADO A MEDIO ELEVACION
     public void medio_cliente_irMedioElevacion(boolean telepase, String nombreHilo, int indice) throws InterruptedException{
-        if (!mediosAbiertos()) return;
+        if (!mediosAbiertos()) return;      //  Si los medios no estan abiertos entonces no es posible entrar
 
-
-        personasEnMedio.incrementAndGet();
+        ImpresionGUI.print("Medio Elevacion", nombreHilo + " va al medio n°" + (indice + 1));  //  Mensaje de exito
+        personasEnMedio.incrementAndGet();      
         mediosDeElevacion[indice].esquiador_ingresar(telepase, nombreHilo);
         personasEnMedio.decrementAndGet();
     }
@@ -204,10 +204,6 @@ public class Complejo {
                 ":\n\tUsos: " + mediosDeElevacion[i].getUsosTotal() + 
                 "\n\tPersonas: " + mediosDeElevacion[i].getPersonasEsperando() + "\n";
         }
-
-
-
-
 
 
         return r;

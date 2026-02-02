@@ -14,6 +14,7 @@ public class ImpresionGUI {
     private static final int ALTO = 300;
     private static final Color BG = Color.BLACK;
     private static final Color FG = Color.GREEN;
+    private static int fontSize = 16;
 
     /**
      * Imprime un mensaje en una ventana con el nombre dado.
@@ -22,9 +23,14 @@ public class ImpresionGUI {
      * @param nombre   Nombre único de la ventana (ej: "Parque")
      * @param mensaje  Mensaje a agregar (ej: "ingreso cliente")
      */
+
+    public static void setFontSize(int size){
+        fontSize = size;
+    }
+
     public static void print(String nombre, String mensaje) {
         VentanaGUI ventana = ventanas.computeIfAbsent(nombre, k -> new VentanaGUI(nombre, ANCHO, ALTO, BG, FG));
-
+        ventana.setFontSize(fontSize);
         ventana.agregarTexto(mensaje + "\n");
     }
 

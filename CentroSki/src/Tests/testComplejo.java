@@ -2,6 +2,9 @@ package Tests;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.util.Random;
 
@@ -45,7 +48,7 @@ public class testComplejo {
 
         //  ARMADO DE HILOS
         //      CLIENTES
-        Thread[] a = new Thread[10];
+        Thread[] a = new Thread[20];
         armarHilos(a, prueba);
 
         //      CONFITERIA
@@ -98,6 +101,20 @@ public class testComplejo {
             //  GUI
             
             
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice[] pantallas = ge.getScreenDevices();
+            
+        GraphicsDevice seleccionada = (pantallas.length>1)?pantallas[1]:pantallas[0];
+        Rectangle limitesPantalla = seleccionada.getDefaultConfiguration().getBounds();
+            
+        
+        int grosorLabel = 0;
+        int pantalla_ancho = limitesPantalla.width;
+        int pantalla_alto = limitesPantalla.height - grosorLabel;
+
+
+        ImpresionGUI.setFontSize((pantalla_alto/60));
+
         ImpresionGUI.print("Complejo Datos", "");
         ImpresionGUI.print("Confiteria", "");
         ImpresionGUI.print("Medio Elevacion", "");
@@ -110,44 +127,38 @@ public class testComplejo {
         VentanaGUI GUI_Clases = ImpresionGUI.getGUI("Clases de Ski");
         VentanaGUI GUI_Medio = ImpresionGUI.getGUI("Medio Elevacion");
 
-        Dimension resolucion = Toolkit.getDefaultToolkit().getScreenSize();
-
-        int grosorLabel = 30;
-        int pantalla_ancho = resolucion.width;
-        int pantalla_alto = resolucion.height - grosorLabel;
-
-        int gui_complejo_x = 0;
-        int gui_complejo_y = 0;
+        int gui_complejo_x = limitesPantalla.x + 0;
+        int gui_complejo_y = limitesPantalla.y + 0;
         int gui_complejo_ancho = pantalla_ancho/2;
         int gui_complejo_alto = pantalla_alto/3;
         GUI_Comple.setResolution(gui_complejo_ancho, gui_complejo_alto);
         GUI_Comple.setPosition(gui_complejo_x,gui_complejo_y);
 
 
-        int gui_confiteria_x = 0;
-        int gui_confiteria_y = gui_complejo_alto + grosorLabel;
+        int gui_confiteria_x = limitesPantalla.x + 0;
+        int gui_confiteria_y = limitesPantalla.y + gui_complejo_alto + grosorLabel;
         int gui_confiteria_ancho = pantalla_ancho/2;
         int gui_confiteria_alto = pantalla_alto/3;
         GUI_Confi.setResolution(gui_confiteria_ancho, gui_confiteria_alto);
         GUI_Confi.setPosition(gui_confiteria_x, gui_confiteria_y);
 
-        int gui_medio_x = 0;
-        int gui_medio_y = gui_confiteria_alto + gui_confiteria_alto + grosorLabel;
+        int gui_medio_x = limitesPantalla.x + 0;
+        int gui_medio_y = limitesPantalla.y + gui_confiteria_alto + gui_confiteria_alto + grosorLabel;
         int gui_medio_ancho = pantalla_ancho/2;
         int gui_medio_alto = pantalla_alto/3;
         GUI_Medio.setResolution(gui_medio_ancho, gui_medio_alto);
         GUI_Medio.setPosition(gui_medio_x, gui_medio_y);
 
-        int gui_ventana_x = gui_complejo_ancho;
-        int gui_ventana_y = 0;
+        int gui_ventana_x = limitesPantalla.x + gui_complejo_ancho;
+        int gui_ventana_y = limitesPantalla.y + 0;
         int gui_ventana_ancho = pantalla_ancho/2;
         int gui_ventana_alto = (pantalla_alto * 2)/3 ;
         GUI_ventana.setResolution(gui_ventana_ancho, gui_ventana_alto);
         GUI_ventana.setPosition(gui_ventana_x, gui_ventana_y);
 
 
-        int gui_Clases_x = gui_complejo_ancho;
-        int gui_Clases_y = gui_ventana_alto + grosorLabel;
+        int gui_Clases_x = limitesPantalla.x + gui_complejo_ancho;
+        int gui_Clases_y = limitesPantalla.y + gui_ventana_alto + grosorLabel;
         int gui_Clases_ancho = pantalla_ancho/2;
         int gui_Clases_alto = pantalla_alto/3 ;
         GUI_Clases.setResolution(gui_Clases_ancho, gui_Clases_alto);
@@ -207,5 +218,4 @@ public class testComplejo {
         }
     }
 
-              
 }

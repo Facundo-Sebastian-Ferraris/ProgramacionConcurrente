@@ -105,4 +105,8 @@ public class VentanaGUI {
      public void setPosition(int x, int y){
         frame.setLocation(x, y);
     }
+
+    public void setFontSize(int size){
+        textArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, size));
+    }
 }
