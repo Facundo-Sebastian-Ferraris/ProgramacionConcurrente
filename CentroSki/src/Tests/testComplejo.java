@@ -48,7 +48,7 @@ public class testComplejo {
 
         //  ARMADO DE HILOS
         //      CLIENTES
-        Thread[] a = new Thread[20];
+        Thread[] a = new Thread[40];
         armarHilos(a, prueba);
 
         //      CONFITERIA
@@ -93,7 +93,7 @@ public class testComplejo {
         Arte aa = new Arte();
         System.out.println("\u001B[2J\u001B[H"+aa.draw());
         try {
-            Thread.sleep(1000);
+            Thread.sleep(750);
         } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -113,7 +113,7 @@ public class testComplejo {
         int pantalla_alto = limitesPantalla.height - grosorLabel;
 
 
-        ImpresionGUI.setFontSize((pantalla_alto/60));
+        ImpresionGUI.setFontSize((pantalla_alto/65));
 
         ImpresionGUI.print("Complejo Datos", "");
         ImpresionGUI.print("Confiteria", "");

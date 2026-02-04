@@ -181,14 +181,17 @@ public class Complejo {
         String 
             estadoParque = parque_abierto()?"Abierto":"Cerrado",
             estadoMedios = mediosAbiertos()?"Abierto":"Cerrado";
-        
+        int 
+            clasesExitosas = clases.get_ClasesExitosas(),
+            ingresosClase = clases.get_Ingresos();
         r+=
             "CENTRO SKI\t<"+estadoParque+">\n" + 
             "Personas: " + personasEnParque.get() + 
             linea +
             "Clase de Ski: \n" +
             "Personas: " + personasEnClase.get() + "\n" +
-            "Clases exitosas: " + clases.get_ClasesExitosas() + 
+            "Clases exitosas: " + clasesExitosas + " (total teorico: "+ (clasesExitosas*4*120) +")\n" +
+            "Ingresos: $" + ingresosClase + " ("+ (((clasesExitosas*4*120)- ingresosClase)/120) + " no pagaron)\n" +
             linea +
             "Confiteria:\n" +
             "Personas: " + personasEnConfiteria.get() + "\n" +
