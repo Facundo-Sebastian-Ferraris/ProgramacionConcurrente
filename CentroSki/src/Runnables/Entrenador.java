@@ -1,7 +1,6 @@
 package Runnables;
 
 import ElementosCentro.Complejo;
-import centroski.ANSI_Colors;
 
 //  Entidad que interactua en todas las atracciones
 public class Entrenador implements Runnable{

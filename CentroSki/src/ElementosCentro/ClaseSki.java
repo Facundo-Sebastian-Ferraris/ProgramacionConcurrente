@@ -13,15 +13,15 @@ import java.util.concurrent.locks.ReentrantLock;
 public class ClaseSki {
     private final Lock mutex;
     private final Condition 
-        intructores_esperando,
         skiers_esperando;
 
-    private final Semaphore GENERIC_Esperando;
+    private final Semaphore RENDEVOUZ_instructor;
     private int cantidadEsperando;
 
     private AtomicInteger 
         clasesExitosas = new AtomicInteger(0),
-        ingresos = new AtomicInteger(0);
+        ingresos = new AtomicInteger(0),
+        impaciencia = new AtomicInteger(0);
 
     private final CyclicBarrier RENDEVOUZ_NotificarProfesor;
     private final Semaphore RENDEVOUZ_FinalizadaClase;
@@ -30,51 +30,46 @@ public class ClaseSki {
     //  CONSTRUCTOR
     public ClaseSki(){
         mutex = new ReentrantLock();
-        intructores_esperando = mutex.newCondition();
         skiers_esperando = mutex.newCondition();
         cantidadEsperando = 0;
 
-        GENERIC_Esperando = new Semaphore(4);
         RENDEVOUZ_NotificarProfesor = new CyclicBarrier(4, () ->{callbackBarrera();});
         RENDEVOUZ_FinalizadaClase = new Semaphore(0);
+        RENDEVOUZ_instructor = new Semaphore(0);
     }
 
 
     public void esquiador_irClase(String nombreHilo) throws InterruptedException{
         ingresos.addAndGet(120);        //  Paga al ingresar
         boolean lograEsperar = true;    //  Auxiliar para determinar grupos
-        
-        GENERIC_Esperando.acquire();
-        
-        
+
+
         //  Formacion de grupo
         mutex.lock();
         try {
             cantidadEsperando++;
-            ImpresionGUI.print("Clases de Ski", nombreHilo + " esta interesado en instruirse (" + cantidadEsperando + ")");
-            
+
+            printGUI( nombreHilo + " esta interesado en instruirse (" + cantidadEsperando + ")");
+
             skiers_esperando.signalAll();      // resetea la "paciencia del hilo"
             while(cantidadEsperando < 4 && lograEsperar){
-                lograEsperar = skiers_esperando.await(2, TimeUnit.SECONDS);
+                lograEsperar = skiers_esperando.await(3, TimeUnit.SECONDS);
             }
 
-
-            if (cantidadEsperando == 4) {
-                lograEsperar = true;
-            }
+            lograEsperar = cantidadEsperando == 4;
 
         } finally {
             mutex.unlock();
         }
         if (!lograEsperar){
+
+            printGUI( nombreHilo + " se le agota la paciencia y se va");
             cantidadEsperando--;
-            GENERIC_Esperando.release();
             ingresos.addAndGet(-120);       //  Reembolso
+            impaciencia.incrementAndGet();
             return;
-        }      //  Despues de liberar el lock se retira
+        }
 
-
-        //  
         // Cuando ya tenga el grupo formado ahora toca esperar al instructor
         try {
             RENDEVOUZ_NotificarProfesor.await();
@@ -82,29 +77,19 @@ public class ClaseSki {
             e1.printStackTrace();
         }
 
-        ImpresionGUI.print("Clases de Ski", nombreHilo + " en clase!!!");
+        printGUI( nombreHilo + " en clase!!!");
         RENDEVOUZ_FinalizadaClase.acquire();
-        ImpresionGUI.print("Clases de Ski", nombreHilo + " finalizada clase!!!");
+        printGUI( nombreHilo + " finalizada clase!!!");
 
     }
     
     
     public void instructor_darClase(String nombreHilo) throws InterruptedException{
-        mutex.lock();
-        try {
-            ImpresionGUI.print("Clases de Ski", nombreHilo  + " espera a que haya grupo");
-
-
-            intructores_esperando.await();
-            ImpresionGUI.print("Clases de Ski", nombreHilo + " llegan alumnos y empieza la clase");
-            cantidadEsperando-=4;
-           
-        } finally {
-            mutex.unlock();
-        }
-        
-        ImpresionGUI.print("Clases de Ski", nombreHilo + " espera a que lleguen los 4");
-        ImpresionGUI.print("Clases de Ski", nombreHilo + " llegan los 4 y enseñan");
+        printGUI( nombreHilo  + " espera a que haya grupo");
+        RENDEVOUZ_instructor.acquire();
+        printGUI( nombreHilo + " llegan alumnos y empieza la clase");        
+        printGUI( nombreHilo + " espera a que lleguen los 4");
+        printGUI( nombreHilo + " llegan los 4 y enseñan");
         Thread.sleep(5000);
         RENDEVOUZ_FinalizadaClase.release(4);
         clasesExitosas.incrementAndGet();
@@ -113,11 +98,11 @@ public class ClaseSki {
     }
 
     private void callbackBarrera(){
-        ImpresionGUI.print("Clases de Ski","("+Thread.currentThread().getName()+")\tLibera a instructor" );
-        GENERIC_Esperando.release(4);
+        printGUI("("+Thread.currentThread().getName()+")\tLibera a instructor" );
         mutex.lock();
         try{
-            intructores_esperando.signal();
+            cantidadEsperando-=4;
+            RENDEVOUZ_instructor.release();
         }finally{
             mutex.unlock();
         }
@@ -130,5 +115,13 @@ public class ClaseSki {
 
     public int get_Ingresos(){
         return ingresos.get();
+    }
+
+    public int get_Impaciencia(){
+        return impaciencia.get();
+    }
+
+    private void printGUI(String r){
+        ImpresionGUI.print("Clases de Ski", r);
     }
 }

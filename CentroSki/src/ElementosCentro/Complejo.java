@@ -183,29 +183,31 @@ public class Complejo {
             estadoMedios = mediosAbiertos()?"Abierto":"Cerrado";
         int 
             clasesExitosas = clases.get_ClasesExitosas(),
-            ingresosClase = clases.get_Ingresos();
+            ingresosClase = clases.get_Ingresos(),
+            impaciencia = clases.get_Impaciencia();
         r+=
             "CENTRO SKI\t<"+estadoParque+">\n" + 
             "Personas: " + personasEnParque.get() + 
             linea +
             "Clase de Ski: \n" +
-            "Personas: " + personasEnClase.get() + "\n" +
+            // "Personas: " + personasEnClase.get() + "\n" +
+            // "Impacientes: " + impaciencia + "\n" +
             "Clases exitosas: " + clasesExitosas + " (total teorico: "+ (clasesExitosas*4*120) +")\n" +
             "Ingresos: $" + ingresosClase + " ("+ (((clasesExitosas*4*120)- ingresosClase)/120) + " no pagaron)\n" +
             linea +
             "Confiteria:\n" +
-            "Personas: " + personasEnConfiteria.get() + "\n" +
+            // "Personas: " + personasEnConfiteria.get() + "\n" +
             "Ventas: " + confiteria.get_numeroVentas() +
             linea +
-            "Medios de Elevacion\t<"+estadoMedios+">\n" + 
-            "Personas: " + personasEnMedio.get() + "\n";
+            "Medios de Elevacion\t<"+estadoMedios+">\n"; //+ 
+            // "Personas: " + personasEnMedio.get() + "\n";
         
         for (int i = 0; i < mediosDeElevacion.length; i++) {
             r += 
                 "Medio " + (i+1) +
                 ":\n\tMolinetes: " + mediosDeElevacion[i].getNumMolinetes()+  
-                ":\n\tUsos: " + mediosDeElevacion[i].getUsosTotal() + 
-                "\n\tPersonas: " + mediosDeElevacion[i].getPersonasEsperando() + "\n";
+                ":\n\tUsos: " + mediosDeElevacion[i].getUsosTotal(); //+ 
+                // "\n\tPersonas: " + mediosDeElevacion[i].getPersonasEsperando() + "\n";
         }
 
 

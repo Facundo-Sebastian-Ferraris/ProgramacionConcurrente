@@ -55,11 +55,11 @@ public class MedioElevacion {
 
     //  Validar pase por molinete
     if(!molinetes[i].ingresar(telepase)) {        //  Terminar algoritmo si ya no es posible ingresar
-      ImpresionGUI.print("Medio Elevacion", nombreHilo + "no cuenta con telepase, entonces se va");  //  Mensaje de exito
+      printGUI(nombreHilo + "no cuenta con telepase, entonces se va");  //  Mensaje de exito
       return;
     }  
 
-    ImpresionGUI.print("Medio Elevacion", nombreHilo + " pasa y espera abordaje");  //  Mensaje de exito
+    printGUI(nombreHilo + " pasa y espera abordaje");  //  Mensaje de exito
 
     personasEsperando.incrementAndGet();
     esquiador_esperar(nombreHilo);                //  Modularizacion  donde entra monitores 
@@ -75,44 +75,44 @@ public class MedioElevacion {
     //    1.  Si no hay sillas para subirse
     //    2.  Si la aerosilla se va
     while(sillasDisponibles == 0 || inicioViaje){
-      if (sillasDisponibles == 0) ImpresionGUI.print("Medio Elevacion", "No hay sillas disponibles!");
-      if (inicioViaje) ImpresionGUI.print("Medio Elevacion", "la aerosilla se va");
+      if (sillasDisponibles == 0) printGUI("No hay sillas disponibles!");
+      if (inicioViaje) printGUI("la aerosilla se va");
       
 
-        ImpresionGUI.print("Medio Elevacion",  nombreHilo + " esperando silla...");
+        printGUI( nombreHilo + " esperando silla...");
         wait();
-        ImpresionGUI.print("Medio Elevacion",  nombreHilo + " chequea si hay silla...");
+        printGUI( nombreHilo + " chequea si hay silla...");
     }
     
 
-    ImpresionGUI.print("Medio Elevacion", nombreHilo + " sube silla");
+    printGUI(nombreHilo + " sube silla");
     
     
     sillasDisponibles--;              //  Hilo sube a silla
     while(!finalViaje) wait();    //  Hilo espera que termine el viaje
     sillasDisponibles++;              //  Hilo termina de viajar y se baja
     
-    ImpresionGUI.print("Medio Elevacion", nombreHilo + " baja silla");
+    printGUI(nombreHilo + " baja silla");
   }
 
 
   public synchronized void embarcador_DarSilla(String nombreHilo) throws InterruptedException{
     inicioViaje = false;    //  habilita silla para abordar hilos
-    ImpresionGUI.print("Medio Elevacion", "\t" + nombreHilo + " <<  setea silla en movimiento a "+ inicioViaje);
+    printGUI("\t" + nombreHilo + " <<  setea silla en movimiento a "+ inicioViaje);
 
     finalViaje = false;     //  indica trayecto de hilos a terminar
-    ImpresionGUI.print("Medio Elevacion", "\t" + nombreHilo + " << despierta hilos");
+    printGUI("\t" + nombreHilo + " << despierta hilos");
 
     notifyAll();            //  despierta todos los hilos a subirse
 
-    ImpresionGUI.print("Medio Elevacion", "\t" + nombreHilo + " << espera 1000");
+    printGUI("\t" + nombreHilo + " << espera 1000");
     wait(1000);             //  1s tolerancia
-    ImpresionGUI.print("Medio Elevacion", "\t" + nombreHilo + " >> pasaron 1000 y ahora empieza viaje con "+ (molinetes.length-sillasDisponibles));
+    printGUI("\t" + nombreHilo + " >> pasaron 1000 y ahora empieza viaje con "+ (molinetes.length-sillasDisponibles));
     inicioViaje = true;     //  silla se mueve, ningun hilo puede subirse ahora
 
 
     wait(1000);             //  1s de viaje
-    ImpresionGUI.print("Medio Elevacion", "\t" + nombreHilo + " >> termina viaje y avisa que se vayan");
+    printGUI("\t" + nombreHilo + " >> termina viaje y avisa que se vayan");
     finalViaje = true;      //  termina viaje
 
 
@@ -140,4 +140,8 @@ public class MedioElevacion {
   public int getNumMolinetes(){
     return molinetes.length;
   }
+
+   private void printGUI(String r){
+        ImpresionGUI.print( "Medio Elevacion", r);
+    }
 }
