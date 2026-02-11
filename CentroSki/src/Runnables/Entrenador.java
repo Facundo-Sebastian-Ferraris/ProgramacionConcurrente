@@ -5,11 +5,13 @@ import ElementosCentro.Complejo;
 //  Entidad que interactua en todas las atracciones
 public class Entrenador implements Runnable{
     private final Complejo complejo;        //  Recurso Compartido
+    private boolean ski;        //  Recurso Compartido
 
 
     //  Constructor
-    public Entrenador(Complejo complejo){
+    public Entrenador(Complejo complejo, boolean ski){
         this.complejo = complejo;
+        this.ski = ski;
     }
 
 
@@ -18,7 +20,7 @@ public class Entrenador implements Runnable{
     public void run() {
         try {
             while (true) {
-                complejo.claseSki_Instructor_instruir(getName());
+                complejo.claseSki_Instructor_instruir(getName(), ski);
             }
         } catch (InterruptedException e) {
             e.printStackTrace();

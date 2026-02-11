@@ -27,7 +27,7 @@ public class testComplejo {
     public static void main(String[] args) {
         Random rng = new Random();
 
-        //  RECURSOS PRIMORDIALES     
+        //  RECURSOS PRIMORDIALES
         Reloj reloj = new Reloj(8, 10);
 
 
@@ -54,7 +54,7 @@ public class testComplejo {
         //      CONFITERIA
         Cajero cajero = new Cajero(prueba);
         Thread t_cajero = new Thread(cajero, "cajero");
-        
+
 
         Cocinero cocinero = new Cocinero(prueba);
         Cocinero cocinero2 = new Cocinero(prueba);
@@ -65,13 +65,13 @@ public class testComplejo {
 
 
         //      CLASE SKI
-        Entrenador entrenador = new Entrenador(prueba);
-        Entrenador entrenador2 = new Entrenador(prueba);
-        Entrenador entrenador3 = new Entrenador(prueba);
+        Entrenador entrenador = new Entrenador(prueba, true);
+        Entrenador entrenador2 = new Entrenador(prueba, true);
+        Entrenador entrenador3 = new Entrenador(prueba, false);
         Thread t_entrenador = new Thread(entrenador, "entrenador1");
         Thread t_entrenador2 = new Thread(entrenador2, "entrenador2");
         Thread t_entrenador3 = new Thread(entrenador3, "entrenador3");
-        
+
 
         //      MEDIO ELEVACION
         Aerosilla a1 = new Aerosilla(prueba, 0);
@@ -83,12 +83,12 @@ public class testComplejo {
         Thread ta2 = new Thread(a2, "Aerosilla 2");
         Thread ta3 = new Thread(a3, "Aerosilla 3");
         Thread ta4 = new Thread(a4, "Aerosilla 4");
-        
+
 
         //      TIEMPO
         RunReloj chronos = new RunReloj(prueba, 100);
         Thread  t_chronos = new Thread(chronos, "chronos");
-        
+
 
         Arte aa = new Arte();
         System.out.println("\u001B[2J\u001B[H"+aa.draw());
@@ -97,17 +97,17 @@ public class testComplejo {
         } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            
+
             //  GUI
-            
-            
+
+
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice[] pantallas = ge.getScreenDevices();
-            
+
         GraphicsDevice seleccionada = (pantallas.length>1)?pantallas[1]:pantallas[0];
         Rectangle limitesPantalla = seleccionada.getDefaultConfiguration().getBounds();
-            
-        
+
+
         int grosorLabel = 0;
         int pantalla_ancho = limitesPantalla.width;
         int pantalla_alto = limitesPantalla.height - grosorLabel;
@@ -120,7 +120,7 @@ public class testComplejo {
         ImpresionGUI.print("Medio Elevacion", "");
         ImpresionGUI.print("Complejo", "");
         ImpresionGUI.print("Clases de Ski", "");
-            
+
         VentanaGUI GUI_ventana = ImpresionGUI.getGUI("Complejo Datos");
         VentanaGUI GUI_Confi = ImpresionGUI.getGUI("Confiteria");
         VentanaGUI GUI_Comple = ImpresionGUI.getGUI("Complejo");
@@ -170,7 +170,7 @@ public class testComplejo {
 
         //      TIEMPO
         t_chronos.start();
-        
+
 
         //      CONFITERIA
         t_cajero.start();
@@ -193,7 +193,7 @@ public class testComplejo {
 
         //      CLIENTES
         arrancarHilos(a);
-        
+
         while (true) {
             try {
                 Thread.sleep(100);
