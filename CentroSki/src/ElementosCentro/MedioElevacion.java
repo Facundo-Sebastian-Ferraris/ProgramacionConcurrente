@@ -4,8 +4,10 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class MedioElevacion {
-  private final Molinete[]
+  private final Molinete[][]
     molinetes;              //  ⛷️ Atributo del Medio
+
+  private final Aerosilla aerosillas[] = new Aerosilla[2];
 
 
   private final Semaphore
@@ -13,8 +15,7 @@ public class MedioElevacion {
     MUTEX_Aerosilla[];
 
   private int
-    sillasDisponibles[],    //  🪑 Sillas disponibles
-    indice;                 //  🔄 Alternar Molinetes
+    indice[];                 //  🔄 Alternar Molinetes
 
   private final AtomicInteger
     skiersEsperando;        //  ⛷️ Recurso de Control
@@ -33,21 +34,21 @@ public class MedioElevacion {
     MUTEX_Aerosilla[1] = new Semaphore(1);
     skiersEsperando = new AtomicInteger();
 
+    aerosillas[0] = new Aerosilla(cantidadMolinetes, true);
+    aerosillas[1] = new Aerosilla(cantidadMolinetes, false);
 
-    molinetes = new Molinete[cantidadMolinetes];
+    molinetes = new Molinete[2][cantidadMolinetes];  // se usa el doble por el uso de los extremos
     iniciarMolinetes(cantidadMolinetes);            //⚙️ Modularizacion para iniciar cada molinete
 
 
-    sillasDisponibles = new int[2];
-    sillasDisponibles[0] = molinetes.length;
-    sillasDisponibles[1] = molinetes.length;
-    indice = 0;
-
+    indice = new int[2];
+    indice[0] = 0;
+    indice[1] = 0;
 
     finalViaje = new boolean[2];
     finalViaje[0] = false;
     finalViaje[1] = false;
-    
+
 
     inicioViaje = new boolean[2];
     inicioViaje[0] = false;
@@ -57,102 +58,88 @@ public class MedioElevacion {
 
   private void iniciarMolinetes(int cantidadMolinetes){
     for (int i = 0; i < molinetes.length; i++) {
-        molinetes[i] = new Molinete();
+        for (int j = 0; j < molinetes[0].length; j++) {
+          molinetes[i][j] = new Molinete();
+        }
     }
   }
 
 
 
 
-  public boolean esquiador_ingresar(boolean telepase, String nombreHilo, boolean subida) throws InterruptedException{
+  public boolean esquiador_ingresar(boolean telepase, String nombreHilo, boolean arriba) throws InterruptedException{
+    int s = arriba ? 1 : 0;
     //  🎫 Asignacion de molinete
+
+    // (0, 1, 2 ||  3, 4, 5 6)  s*indice[s]+
     MUTEX_Skiers.acquire();
-      int i = indice++;                       //  🎯 Obtencion de molinete
-      indice %= this.molinetes.length;        //  🔄 Ciclar indice [0, N], N = cantidad molinetes
+    int i = indice[s]++;
+    indice[s] %= aerosillas.length;
     MUTEX_Skiers.release();
 
 
     //  ✅ Validar pase por molinete
-    if(!molinetes[i].ingresar(telepase)) {    //  🚫 Terminar algoritmo si ya no es posible ingresar
+    if(!molinetes[s][i].ingresar(telepase)) {    //  🚫 Terminar algoritmo si ya no es posible ingresar
       printGUI(nombreHilo + "no cuenta con telepase, entonces se va");
       return false;
     }
- 
+
     printGUI(nombreHilo + " pasa y espera abordaje");
 
     skiersEsperando.incrementAndGet();
-    esquiador_esperar(nombreHilo, subida);    //  🎯 Modularizacion  donde entra monitores
+    esquiador_esperar(nombreHilo, arriba);    //  🎯 Modularizacion  donde entra monitores
     skiersEsperando.decrementAndGet();
     return true;
   }
 
-  private synchronized void esquiador_esperar(String nombreHilo, boolean subida)  throws InterruptedException{
-    int i = (subida)?1:0;
-
-
-    // 🖥️ Monitor While:
-    // 😴 Hilos esperan si ocurre cualquiera de los casos:
-    //    1. ❌ Si no hay sillas para subirse
-    //    2. 🚂 Si la aerosilla se va
-    while(sillasDisponibles[i] == 0 || inicioViaje[i]){
-      if (sillasDisponibles[i] == 0) printGUI("No hay sillas disponibles!");
-      if (inicioViaje[i]) printGUI("la aerosilla se va");
-
-
+  private synchronized void esquiador_esperar(String nombreHilo, boolean arriba)  throws InterruptedException{
+    Aerosilla aero = buscarAerosilla(arriba);
+    while(!aero.subirse()){
         printGUI( nombreHilo + " esperando silla...");
         wait();
         printGUI( nombreHilo + " chequea si hay silla...");
+        aero = buscarAerosilla(!arriba);
     }
 
-
-    printGUI(nombreHilo + " sube silla");
-
-
-    sillasDisponibles[i]--;          // 📈 Hilo sube a silla
-    while(!finalViaje[i]) wait();    // ⏳ Hilo espera que termine el viaje
-    sillasDisponibles[i]++;          // 📉 Hilo termina de viajar y se baja
+    while(!aero.bajarse()) wait();   // ⏳ Hilo espera que termine el viaje
 
     printGUI(nombreHilo + " baja silla");
   }
 
 
+  private Aerosilla buscarAerosilla(boolean arriba){
+    int i = 0;
+    while (aerosillas[i].getArriba() != arriba) {
+      i = (i + 1) % aerosillas.length;
+    }
 
-
-  public synchronized void aerosilla_Viaje(String nombreHilo, boolean subida) throws InterruptedException{
-    int i = (subida)?1:0;
-
-    MUTEX_Aerosilla[i].acquire();
-    inicioViaje[i] = false;   // 🟢 habilita silla para abordar hilos
-    printGUI("\t" + nombreHilo + " <<  setea silla en movimiento a "+ inicioViaje[i]);
-
-    finalViaje[i] = false;    // 🔄 indica trayecto de hilos a terminar
-    printGUI("\t" + nombreHilo + " << despierta hilos");
-
-    notifyAll();              // 📢 despierta todos los hilos a subirse
-
-    printGUI("\t" + nombreHilo + " << espera 1000");
-    wait(1000);               // ⏱️ 1s tolerancia
-    printGUI("\t" + nombreHilo + " >> pasaron 1000 y ahora empieza viaje con " + (molinetes.length-sillasDisponibles[i]));
-    inicioViaje[i] = true;    // 🚫 silla se mueve, ningun hilo puede subirse ahora
-
-
-    wait(1000);               // 🕐 1s de viaje
-    printGUI("\t" + nombreHilo + " >> termina viaje y avisa que se vayan");
-    finalViaje[i] = true;     // ✅ termina viaje
-
-
-    notifyAll();              // 📢 habilita silla para que se bajen
-    wait(1000);               // ⏱️ 1s de tolerancia
-    MUTEX_Aerosilla[i].release();
+    return aerosillas[i];
   }
 
+
+  public synchronized void gestor_Aerosillas() throws InterruptedException{
+    wait(3000);     //  3s de espera antes de iniciar viaje
+    //  Iniciar viajes para las 2 aerosillas
+    for (int i = 0; i < aerosillas.length; i++) {
+     aerosillas[i].iniciarViaje();
+    }
+    wait(3000);     //  3s de viaje
+    for (int i = 0; i < aerosillas.length; i++) {
+      aerosillas[i].terminarViaje();
+    }
+    notifyAll();    //  Notificar para que se bajen de la aerosilla
+    wait(3000);     //  3s de para que se bajen
+    notifyAll();    //  Notificar para que se suban nuevos
+  }
 
 
   // 📊 GETTERS
   public synchronized int getUsosTotal(){
     int r = 0;
     for (int i = 0; i < molinetes.length; i++) {
-        r += this.molinetes[i].getUsosTotal();
+      for (int j = 0; j < molinetes[0].length; j++) {
+        r += this.molinetes[i][j].getUsosTotal();
+      }
     }
     return r;
   }

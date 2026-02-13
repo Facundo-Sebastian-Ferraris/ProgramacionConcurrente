@@ -3,12 +3,12 @@ package Runnables;
 import ElementosCentro.Complejo;
 
 //  Entidad que interactua en todas las atracciones
-public class Aerosilla implements Runnable{
+public class GestorAerosillas implements Runnable{
     private final Complejo complejo;        //  Recurso Compartido
     private final int indice;
 
     //  Constructor
-    public Aerosilla(Complejo complejo, int indice){
+    public GestorAerosillas(Complejo complejo, int indice){
         this.complejo = complejo;
         this.indice = indice;
     }
@@ -21,7 +21,7 @@ public class Aerosilla implements Runnable{
 
         try {
             while (true){
-                complejo.medio_embarcador_darSilla(indice, nombreHilo);
+                complejo.medio_gestor_darSilla(indice, nombreHilo, false);
             }
         } catch (InterruptedException e) {
             e.printStackTrace();

@@ -16,7 +16,7 @@ import ElementosCentro.ImpresionGUI;
 import ElementosCentro.MedioElevacion;
 import ElementosCentro.Reloj;
 import ElementosCentro.VentanaGUI;
-import Runnables.Aerosilla;
+import Runnables.GestorAerosillas;
 import Runnables.Cajero;
 import Runnables.Cliente;
 import Runnables.Cocinero;
@@ -68,16 +68,16 @@ public class testComplejo {
         Entrenador entrenador = new Entrenador(prueba, true);
         Entrenador entrenador2 = new Entrenador(prueba, true);
         Entrenador entrenador3 = new Entrenador(prueba, false);
-        Thread t_entrenador = new Thread(entrenador, "entrenador1");
-        Thread t_entrenador2 = new Thread(entrenador2, "entrenador2");
-        Thread t_entrenador3 = new Thread(entrenador3, "entrenador3");
+        Thread t_entrenador = new Thread(entrenador, "entrenador ski 1");
+        Thread t_entrenador2 = new Thread(entrenador2, "entrenador ski 2");
+        Thread t_entrenador3 = new Thread(entrenador3, "entrenador snow 1");
 
 
         //      MEDIO ELEVACION
-        Aerosilla a1 = new Aerosilla(prueba, 0);
-        Aerosilla a2 = new Aerosilla(prueba, 1);
-        Aerosilla a3 = new Aerosilla(prueba, 2);
-        Aerosilla a4 = new Aerosilla(prueba, 3);
+        GestorAerosillas a1 = new GestorAerosillas(prueba, 0);
+        GestorAerosillas a2 = new GestorAerosillas(prueba, 1);
+        GestorAerosillas a3 = new GestorAerosillas(prueba, 2);
+        GestorAerosillas a4 = new GestorAerosillas(prueba, 3);
 
         Thread ta1 = new Thread(a1, "Aerosilla 1");
         Thread ta2 = new Thread(a2, "Aerosilla 2");

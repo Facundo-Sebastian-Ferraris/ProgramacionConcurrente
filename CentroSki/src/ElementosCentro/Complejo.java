@@ -2,8 +2,6 @@ package ElementosCentro;
 
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class Complejo {
     private final Random random = new Random();
@@ -72,6 +70,7 @@ public class Complejo {
         boolean arriba = false;
         boolean salir = false;
         personasEnParque.incrementAndGet();			    //	 +1 Cliente que accedio 👤
+        int visitas = 0;
         int accion = 0;								    //	 Cliente decide que hacer 🤔
         boolean telepase = random.nextBoolean();        //	 Cliente ingresa al parque con o sin telepase 🎫
 
@@ -82,17 +81,20 @@ public class Complejo {
                 accion = random.nextInt(1, 4);
                 switch (accion) {
                     case 1: confiteria_cliente_ingresar(nombreHilo); break;
-                    case 2: medio_cliente_irMedioElevacion(telepase, nombreHilo, random.nextInt(0,4),false); break;
-                    case 3: esquiar(nombreHilo); arriba = false;
+                    case 2: arriba = medio_cliente_irMedioElevacion(telepase, nombreHilo, random.nextInt(0,4),false) ? false : !esquiar(nombreHilo); break;
+                    case 3: arriba = !esquiar(nombreHilo); break;
                 }
             } else {
                 accion = random.nextInt(1, 3);
                 switch (accion) {
                     case 1: claseSki_cliente_asistir(nombreHilo); break;
-                    case 2: medio_cliente_irMedioElevacion(telepase, nombreHilo, random.nextInt(0,4),true); break;
+                    case 2: arriba = medio_cliente_irMedioElevacion(telepase, nombreHilo, random.nextInt(0,4),true); break;
+                }
+                if (visitas>5) {
+                    salir = random.nextBoolean();
                 }
             }
-            salir = random.nextBoolean();
+            visitas ++;
         }
 
 
@@ -106,33 +108,40 @@ public class Complejo {
         return (8<=hora && hora<22);
     }
 
-    private void esquiar(String nombreHilo){
+    private boolean esquiar(String nombreHilo){
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         ImpresionGUI.print("Complejo", nombreHilo + " baja esquiando!!!");
+        return true;
     }
 
 
 
 
     //	 RELACIONADO A MEDIO ELEVACION 🚡
-    public void medio_cliente_irMedioElevacion(boolean telepase, String nombreHilo, int indice, boolean subida) throws InterruptedException{
-        if (!mediosAbiertos()) return;      //	 Si los medios no estan abiertos entonces no es posible entrar ⛔
+    public boolean medio_cliente_irMedioElevacion(boolean telepase, String nombreHilo, int indice, boolean subida) throws InterruptedException{
+        if (!mediosAbiertos() && subida) return false;      //	 Si los medios no estan abiertos entonces no es posible entrar ⛔
 
 
         ImpresionGUI.print("Medio Elevacion", nombreHilo + " va al medio n°" + (indice + 1));
         personasEnMedio.incrementAndGet();
-        mediosDeElevacion[indice].esquiador_ingresar(telepase, nombreHilo, subida);
+        boolean r = mediosDeElevacion[indice].esquiador_ingresar(telepase, nombreHilo, subida);
         personasEnMedio.decrementAndGet();
+        return r;
     }
 
 
 
 
-    public void medio_embarcador_darSilla(int indice, String nombreHilo, boolean subida)throws InterruptedException{
+    public void medio_gestor_darSilla(int indice, String nombreHilo, boolean subida)throws InterruptedException{
         reloj.ventana(10, 17, 0, 0);
 
 
         personasEnMedio.incrementAndGet();
-        mediosDeElevacion[indice].aerosilla_Viaje(nombreHilo, subida);
+        mediosDeElevacion[indice].gestor_Aerosillas();
         personasEnMedio.decrementAndGet();
     }
 
@@ -220,7 +229,7 @@ public class Complejo {
             linea +
             "Clase de Ski: \n" +
             "Personas: " + personasEnClase.get() + "\n" +
-            "Impacientes: " + impaciencia + "\n" +
+            "Impacientes: " + impaciencia + "(total perdido:$"+(impaciencia*120)+"\n" +
             "Clases exitosas: " + clasesExitosas + " (total teorico: "+ (clasesExitosas*4*120) +")\n" +
             "Ingresos: $" + ingresosClase + " ("+ (((clasesExitosas*4*120)- ingresosClase)/120) + " no pagaron)\n" +
             linea +

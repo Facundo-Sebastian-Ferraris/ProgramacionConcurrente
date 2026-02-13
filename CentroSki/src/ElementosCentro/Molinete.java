@@ -1,26 +1,29 @@
 
 package ElementosCentro;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 /**
  *
  * @author facundo
  */
 public class Molinete {
-    private final AtomicInteger usosTotal;
+  private int usosTotal;
   public Molinete(){
-    this.usosTotal = new AtomicInteger(0);
+    this.usosTotal = 0;
   }
 
-  public boolean ingresar(boolean telepase) {
+  public synchronized boolean ingresar(boolean telepase) {
     if (telepase) {
-      usosTotal.incrementAndGet();        
+      try {
+        Thread.sleep(1000);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+      usosTotal++;
     }
     return telepase;
   }
 
-  public int getUsosTotal(){
-    return usosTotal.get();
+  public synchronized int getUsosTotal(){
+    return usosTotal;
   }
 }

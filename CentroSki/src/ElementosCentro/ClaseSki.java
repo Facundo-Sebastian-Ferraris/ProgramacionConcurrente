@@ -13,6 +13,7 @@ public class ClaseSki {
     private final Lock mutex[];
     private final Condition
         clientes_esperando[],
+        instructorCondicion[],
         nuevos_esperando[];
 
     private int
@@ -37,6 +38,7 @@ public class ClaseSki {
         mutex = new ReentrantLock[2];
         clientes_esperando = new Condition[2];
         nuevos_esperando = new Condition[2];
+        instructorCondicion = new Condition[2];
         clientesEsperando = new int[2];
         instructoresEsperando = new int[2];
         hayGrupo = new boolean[2];
@@ -47,6 +49,7 @@ public class ClaseSki {
             mutex[i] = new ReentrantLock();
             clientes_esperando[i] = mutex[i].newCondition();
             nuevos_esperando[i] = mutex[i].newCondition();
+            instructorCondicion[i] = mutex[i].newCondition();
             clientesEsperando[i] = 0;
             instructoresEsperando[i] = 0;
             hayGrupo[i] = false;
@@ -64,7 +67,10 @@ public class ClaseSki {
         int i = ski?0:1;
         ingresos.addAndGet(120);        //	 Paga al ingresar 💰
 
-        if (!esquiadorFormaGrupo(nombreHilo,i)) return;
+        if (!esquiadorFormaGrupo(nombreHilo,i)) {
+                ingresos.addAndGet(-120);       //	 Reembolso 💸
+                return;
+            }
 
 
         // Cuando ya tenga el grupo formado ahora toca esperar al instructor ⏳
@@ -99,9 +105,12 @@ public class ClaseSki {
 
             lograEsperar = clientesEsperando[i] == 4;
             if (!lograEsperar) {
-                printGUI( nombreHilo + " se le agota la paciencia y se va");
-                ingresos.addAndGet(-120);       //	 Reembolso 💸
+                printGUI( nombreHilo + " se le agota la paciencia y se va ("+((i==0)?"ski":"snow")+" (" + clientesEsperando[i]+"-1 = "+(clientesEsperando[i]-1)+")");
                 clientesEsperando[i]--;
+                if(clientesEsperando[i]<0){
+                    printGUI( nombreHilo + "ALERTA INCONSISTENCIA!!!");
+                }
+                nuevos_esperando[i].signal();
                 impaciencia.incrementAndGet();
                 return false;
             }
@@ -117,7 +126,30 @@ public class ClaseSki {
     public void instructor_darClase(String nombreHilo, boolean ski) throws InterruptedException{
         int i = ski?0:1;
         try {
+            mutex[i].lock();
+            try{
+                printGUI(nombreHilo + " se prepara en cabina");
+                while (instructoresEsperando[i]>0) {
+                    printGUI(nombreHilo + " ve que hay otro instructor a la espera, espera....");
+                    instructorCondicion[i].await();
+                    printGUI(nombreHilo + " se libero el otro instructor, procede a chequear de nuevo");
+                }
+                printGUI(nombreHilo + "se prepara a dar clase");
+                instructoresEsperando[i]++;
+            } finally {
+                mutex[i].unlock();
+            }
+             printGUI(nombreHilo + "espera alumnos...");
             GENERICO_IniciarClase[i].await();
+
+            mutex[i].lock();
+            try{
+                printGUI(nombreHilo + "alumnos llegan, se va con ellos y avisa al otro instructor");
+                instructoresEsperando[i]--;
+                instructorCondicion[i].signal();
+            } finally {
+                mutex[i].unlock();
+            }
             printGUI( nombreHilo + " lleva a cabo la clase!!!");
             Thread.sleep(3000);
             RENDEVOUZ_FinalizadaClase[i].await();
@@ -133,10 +165,11 @@ public class ClaseSki {
 
     private void callbackBarrera(boolean ski){
         int i = ski?0:1;
-        printGUI("("+Thread.currentThread().getName()+")\tLibera a instructor" );
         mutex[i].lock();
         try{
+            printGUI( "se liberan 4 en "+((i==0)?"ski":"snow")+" (" + clientesEsperando[i]+"-4 = "+(clientesEsperando[i]-4)+")");
             clientesEsperando[i]-=4;
+            printGUI("("+Thread.currentThread().getName()+")\tLibera a instructor" );
             nuevos_esperando[i].signalAll();
         }finally{
             mutex[i].unlock();
