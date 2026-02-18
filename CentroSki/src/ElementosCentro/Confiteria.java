@@ -12,7 +12,7 @@ public class Confiteria {
     private final Random rng = new Random();
 
 
-    private final Semaphore 
+    private final Semaphore
         GENERIC_Sillas,                         // 🪑 100 sillas disponibles
         RENDEVOUZ_Cajero,                       // 🤝 Espera cliente en caja
         RENDEVOUZ_TomarPedido,                  // 📝 Cliente listo para dar pedido
@@ -20,16 +20,16 @@ public class Confiteria {
         RENDEVOUZ_RecibirNumeroMostrador,       // 📍 Espera número de mostrador
         RENDEVOUZ_Cocina,                       // 🔔 Notificar a cocina
         RENDEVOUZ_Caja;                         // 🧾 Confirmación de mostrador asignado
-        
+
     private final List<BlockingQueue<String>> mostradores = new ArrayList<>();
     private final String[] menu = {"Tostadas", "Calzone", "Huevo y Palta", "Fugazza"};
 
-    
+
     private int numeroMostrador = 0;
     private AtomicInteger numeroVentas = new AtomicInteger(0);
     private boolean conPostre = false;
     private ArrayBlockingQueue<String> pedido = new ArrayBlockingQueue<String>(100);
-    
+
 
     //  CONSTRUCTOR
     public Confiteria(){
@@ -56,25 +56,25 @@ public class Confiteria {
         printGUI( nombreHilo + " entra a confiteria");
         RENDEVOUZ_Cajero.release();     //  💰 Notifica al cajero
         printGUI( nombreHilo + " esta en la caja esperando");
-        
-        
+
+
         //  📝 Parte 2: Realizar pedido
         RENDEVOUZ_TomarPedido.acquire();        //  ⏳ Espera a dar su pedido
         String comidaDeseada= elegirMenu();
         this.conPostre = conPostre;
         pedido.add(comidaDeseada);
         printGUI(nombreHilo + " desea " + comidaDeseada);
-        if (conPostre) printGUI( "\t y la pidio con postre");       
+        if (conPostre) printGUI( "\t y la pidio con postre");
         RENDEVOUZ_RecibirPedido.release();      //  ✅ Notifica a cajero que terminó su pedido
         printGUI( "\n" + nombreHilo + " espera a que le digan en cual mostrador esperar la comida");
-        
-                   
+
+
         //  📍 Parte 3: Recibir numero del mostrador
         RENDEVOUZ_RecibirNumeroMostrador.acquire();     //  🔢 Espera número de mostrador
         int nMostrador = numeroMostrador;               //  📦 Obtiene mostrador asignado
         printGUI( nombreHilo + " recibe numero y espera en el mostrador " + (nMostrador+1));
         RENDEVOUZ_Caja.release();                       //  ✅ Confirma recepción del número
-        
+
 
         //  🍽️ Parte 4: Retirar Comida
         String comidaObtenida = mostradores.get(nMostrador).take();     //   📦 Retira del mostrador
@@ -88,7 +88,7 @@ public class Confiteria {
             mostradores.get(2).take();                                  //   🍰 Retira postre
             printGUI( nombreHilo + " retira postre");
         }
-        
+
 
         //  😋 Parte 5: Comer
         printGUI( nombreHilo + " empieza a comer");
@@ -99,16 +99,16 @@ public class Confiteria {
         printGUI( nombreHilo + " termina de comer y se va");
         GENERIC_Sillas.release(); // 🪑 Libera silla
     }
-    
-    
+
+
     private String elegirMenu(){
         return menu[rng.nextInt(0,menu.length)];
     }
 
-    
 
 
-    public void cajero_Atender(String nombreHilo) throws InterruptedException{ 
+
+    public void cajero_Atender(String nombreHilo) throws InterruptedException{
         //  💰 Parte 1: Esperando clientes
         printGUI( nombreHilo + " espera clientes");
         RENDEVOUZ_Cajero.acquire();
@@ -135,32 +135,32 @@ public class Confiteria {
         printGUI( nombreHilo + " termina de atender al cliente y al cocinero");
         RENDEVOUZ_Caja.acquire(2);      // 👤 Cliente + 👨‍🍳 Cocinero confirmaron
     }
-     
+
 
 
 
 
     public void cocinero_Preparar(String nombreHilo) throws InterruptedException{
-        //  👨‍🍳 Parte 1: Esperar pedido 
+        //  👨‍🍳 Parte 1: Esperar pedido
         printGUI( nombreHilo + " chequea pedidos");
         String pedido = this.pedido.take();
         boolean postre = conPostre;
         printGUI( nombreHilo + " recibe pedido a preparar y en cual mostrador dejarlo");
-        
-        
+
+
         //  📦 Parte 2: Obtener detalles del pedido
         RENDEVOUZ_Cocina.acquire();     //  🔔 Recibe notificación del cajero
         int nMostrador = numeroMostrador;
         RENDEVOUZ_Caja.release();       //  ✅ Confirma recepción de orden
 
 
-        //  🔥 Parte 3: Realizar pedido 
+        //  🔥 Parte 3: Realizar pedido
         printGUI( nombreHilo + " empieza a cocinar");
         Thread.sleep(3000);
         printGUI( nombreHilo + " sirve el plato en el mostrador");
 
 
-        //  📤 Parte 4: Servir en mostrador 
+        //  📤 Parte 4: Servir en mostrador
         mostradores.get(nMostrador).put(pedido);
         if (postre) {
             printGUI( nombreHilo + " sirve postre en el mostrador");
@@ -171,7 +171,7 @@ public class Confiteria {
 
 
 
-   
+
 
 
 

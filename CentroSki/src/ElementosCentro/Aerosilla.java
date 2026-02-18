@@ -6,6 +6,7 @@ public class Aerosilla {
     private int sillasDisponibles;
     private boolean viajando;
     private boolean arriba;
+    private boolean abordaje;
 
 
 
@@ -15,13 +16,14 @@ public class Aerosilla {
         this.arriba = arriba;
         viajando = false;
         sillasDisponibles = capacidad;
+        abordaje = true;
     }
 
 
 
 
-    public boolean subirse(){
-        boolean r = sillasDisponibles > 0 && !viajando;
+    public synchronized boolean subirse(){
+        boolean r = !viajando && abordaje && sillasDisponibles > 0;
         if (r){
             sillasDisponibles--;
         }
@@ -32,11 +34,13 @@ public class Aerosilla {
 
 
 
-    public boolean bajarse(){
-        boolean r = sillasDisponibles < capacidad && !viajando;
+    public synchronized boolean bajarse(){
+        boolean r = !viajando && !abordaje && sillasDisponibles < capacidad;
         if (r){
             sillasDisponibles++;
+        } else {
         }
+
 
         return r;
     }
@@ -44,14 +48,15 @@ public class Aerosilla {
 
 
 
-    public void iniciarViaje(){
+    public synchronized void iniciarViaje(){
         viajando = true;
+        abordaje = false;
     }
 
 
 
 
-    public void terminarViaje(){
+    public synchronized void terminarViaje(){
         viajando = false;
         arriba = !arriba;
     }
@@ -59,14 +64,42 @@ public class Aerosilla {
 
 
 
-    public boolean getArriba(){
+    public synchronized void habilitarAbordaje() {
+        abordaje = true;
+    }
+
+
+
+
+    public synchronized boolean getArriba(){
         return arriba;
     }
 
 
 
 
-    public boolean getViajando(){
+    public synchronized boolean esDisponible(boolean arriba){
+        return (this.arriba==arriba && !viajando);
+    }
+
+
+
+
+    public synchronized int getSubidos(){
+        return capacidad-sillasDisponibles;
+    }
+
+
+
+
+    public synchronized boolean getViajando(){
         return viajando;
+    }
+
+
+
+
+    public synchronized boolean esVacio(){
+        return sillasDisponibles == 0;
     }
 }

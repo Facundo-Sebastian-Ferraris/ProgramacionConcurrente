@@ -28,12 +28,12 @@ public class testComplejo {
         Random rng = new Random();
 
         //  RECURSOS PRIMORDIALES
-        Reloj reloj = new Reloj(8, 10);
+        Reloj reloj = new Reloj(7, 10);
 
 
         MedioElevacion[] mediosElevacion = new MedioElevacion[4];
         for (int i = 0; i < mediosElevacion.length; i++) {
-            mediosElevacion[i] = new MedioElevacion(rng.nextInt(1,4));
+            mediosElevacion[i] = new MedioElevacion(rng.nextInt(1,4), (i+1));
         }
 
 
@@ -194,14 +194,14 @@ public class testComplejo {
         //      CLIENTES
         arrancarHilos(a);
 
-        while (true) {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            GUI_ventana.actualizarTexto(prueba.toString());
-        }
+        // while (true) {
+        //     try {
+        //         Thread.sleep(100);
+        //     } catch (InterruptedException e) {
+        //         e.printStackTrace();
+        //     }
+        //     GUI_ventana.actualizarTexto(prueba.toString());
+        // }
 
     }
 

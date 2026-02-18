@@ -16,7 +16,7 @@ public class RunReloj implements Runnable {
     }
 
 
-    //  RUNNER  
+    //  RUNNER 
     @Override
     public void run(){
         try {

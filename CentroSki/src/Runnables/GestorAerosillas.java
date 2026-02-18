@@ -20,9 +20,9 @@ public class GestorAerosillas implements Runnable{
         String nombreHilo = Thread.currentThread().getName();
 
         try {
-            while (true){
-                complejo.medio_gestor_darSilla(indice, nombreHilo, false);
-            }
+            //while (true){
+                complejo.medio_gestor_darSilla(indice, nombreHilo);
+            //}
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

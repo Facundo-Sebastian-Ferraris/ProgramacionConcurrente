@@ -72,7 +72,7 @@ public class ClaseSki {
                 return;
             }
 
-
+        printGUI(nombreHilo + " formo grupo");
         // Cuando ya tenga el grupo formado ahora toca esperar al instructor ⏳
         try {
             GENERICO_IniciarClase[i].await();

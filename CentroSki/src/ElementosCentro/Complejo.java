@@ -64,6 +64,7 @@ public class Complejo {
     //      4.	 irse 🚪
     public void complejo_cliente_ingreso(String nombreHilo) throws InterruptedException{
         reloj.ventana(8, 22, 0, 0);
+        printGUI(nombreHilo + "entra al centro de ski!");
 
 
         //  Datos iniciales de acceso del cliente 🧍
@@ -98,7 +99,7 @@ public class Complejo {
         }
 
 
-        ImpresionGUI.print("Complejo", nombreHilo + " se retira del parque");
+        printGUI(nombreHilo + " se retira del parque");
         personasEnParque.decrementAndGet();     //	 -1 Cliente que accedio 👋
     }
 
@@ -114,7 +115,7 @@ public class Complejo {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        ImpresionGUI.print("Complejo", nombreHilo + " baja esquiando!!!");
+        printGUI(nombreHilo + " baja esquiando!!!");
         return true;
     }
 
@@ -123,10 +124,6 @@ public class Complejo {
 
     //	 RELACIONADO A MEDIO ELEVACION 🚡
     public boolean medio_cliente_irMedioElevacion(boolean telepase, String nombreHilo, int indice, boolean subida) throws InterruptedException{
-        if (!mediosAbiertos() && subida) return false;      //	 Si los medios no estan abiertos entonces no es posible entrar ⛔
-
-
-        ImpresionGUI.print("Medio Elevacion", nombreHilo + " va al medio n°" + (indice + 1));
         personasEnMedio.incrementAndGet();
         boolean r = mediosDeElevacion[indice].esquiador_ingresar(telepase, nombreHilo, subida);
         personasEnMedio.decrementAndGet();
@@ -136,19 +133,26 @@ public class Complejo {
 
 
 
-    public void medio_gestor_darSilla(int indice, String nombreHilo, boolean subida)throws InterruptedException{
-        reloj.ventana(10, 17, 0, 0);
+    public void medio_gestor_darSilla(int indice, String nombreHilo)throws InterruptedException{
+        System.out.println("esperando para abrir");
+        reloj.ventana(10, 17,0,0);
+        System.out.println("abierto!");
 
 
-        personasEnMedio.incrementAndGet();
-        mediosDeElevacion[indice].gestor_Aerosillas();
-        personasEnMedio.decrementAndGet();
+        printGUI(nombreHilo + " iniciando gestor");
+        MedioElevacion m = mediosDeElevacion[indice];
+        while (m.permaneceGestor()) {
+            mediosDeElevacion[indice].gestor_Aerosillas(nombreHilo);
+        }
+         printGUI(nombreHilo + " se retira");
     }
 
     //		 Modularizacion del horario de apertura de los medios ⏰
     private boolean mediosAbiertos(){
-        int hora = reloj.getHoras();
-        return (hora>=10 && hora<17);
+        int hora[] = reloj.getTiempo();
+        int horarioInicio = 10*60-1; // 9:59
+        int horarioCierre = 17; // 17:00
+        return (((hora[1]*60+hora[2])>= horarioInicio) && hora[1]<horarioCierre);
     }
 
 
@@ -203,10 +207,24 @@ public class Complejo {
     // RELACIONADO A METRICAS 📊
     //		 RELOJ ⏰
     public void complejo_reloj_simular(int intervalos) throws InterruptedException{
+        VentanaGUI  v= ImpresionGUI.getGUI("Complejo Datos");
         while (reloj.getHoras()<20 || personasEnParque.get() > 0) {
             reloj.incrementar_Minuto();
             Thread.sleep(intervalos);
+            if (!mediosAbiertos()) {
+                for (MedioElevacion medioElevacion : mediosDeElevacion) {
+                    medioElevacion.cerrar();
+                }
+            }else{
+                for (MedioElevacion medioElevacion : mediosDeElevacion) {
+                    medioElevacion.abrir();
+                }
+            }
+            if (reloj.getMinutos()%20 == 0) {
+                v.actualizarTexto(this.toString());
+            }
         }
+        v.actualizarTexto(this.toString());
     }
 
     @Override
@@ -255,5 +273,10 @@ public class Complejo {
     private String getTiempo(){
         int[] time = reloj.getTiempo();
         return String.format("%02d:%02d", time[1], time[2]);
+    }
+
+
+    private void printGUI(String r){
+        ImpresionGUI.print("Complejo", r);
     }
 }

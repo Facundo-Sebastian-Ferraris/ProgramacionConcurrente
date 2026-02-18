@@ -1,0 +1,17 @@
+Cajero: Atiende continuamente en la confitería del complejo.
+  - metodo: complejo.confiteria_cajero_atender(getName())
+
+Cliente: Ingresa al complejo y participa en las atracciones (ejecución única).
+  - metodo: complejo.complejo_cliente_ingreso(getName())
+
+Cocinero: Cocina continuamente en la confitería del complejo.
+  - metodo: complejo.confiteria_cocinero_cocinar(getName())
+
+Entrenador: Instruye clases de ski de forma continua.
+  - metodo: complejo.claseSki_Instructor_instruir(getName(), ski)
+
+GestorAerosillas: Gestiona la operación de una aerosilla específica de forma continua.
+  - metodo: complejo.medio_gestor_darSilla(indice, nombreHilo)
+
+RunReloj: Simula el paso del tiempo en el complejo (ejecución única).
+  - metodo: complejo.complejo_reloj_simular(intervalos)
