@@ -1,6 +1,5 @@
 package ElementosCentro;
 
-import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -10,9 +9,6 @@ public class MedioElevacion {
 
   private final Aerosilla aerosillas[] = new Aerosilla[2];
 
-
-  private final Semaphore
-    MUTEX_Aerosilla[];
 
   private int
     indice[];                 //  🔄 Alternar Molinetes
@@ -29,9 +25,6 @@ public class MedioElevacion {
 
   // 🏗️ Constructor
   public MedioElevacion(int cantidadMolinetes, int id){
-    MUTEX_Aerosilla = new Semaphore[2];
-    MUTEX_Aerosilla[0] = new Semaphore(1);
-    MUTEX_Aerosilla[1] = new Semaphore(1);
     skiersEsperando = new AtomicInteger();
 
     aerosillas[0] = new Aerosilla(cantidadMolinetes, true);
